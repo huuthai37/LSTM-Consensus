@@ -123,7 +123,7 @@ with open(text_file) as f:
                 if not ret:
                     break
                 i += 1  
-                if ((i+10) in train_render) | (i in test_render):
+                if ((i-10) in train_render) | (i in test_render):
                     resize_img = cv2.resize(frame, (340, 256))
                     cv2.imwrite('{}.jpg'.format(i),resize_img)   
 

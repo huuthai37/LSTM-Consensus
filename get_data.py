@@ -53,7 +53,7 @@ def stack_seq_rgb(path_video,render_rgb,dataset,train):
     x = random.randint(0, 340-size)
     y = random.randint(0, 256-size)
 
-    if train == 'valid':
+    if train != 'train':
         size = 224
 
     for i in render_rgb:

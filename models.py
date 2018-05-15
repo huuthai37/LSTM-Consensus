@@ -31,7 +31,7 @@ def SpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagene
 
     result_model = Sequential()
     result_model.add(TimeDistributed(mobilenet, input_shape=(seq_len, 224,224,3)))
-    result_model.add(LSTM(n_neurons, return_sequences=True))
+    result_model.add(LSTM(n_neurons, split_sequences=True))
     result_model.add(Flatten())
     result_model.add(Dropout(dropout))
     result_model.add(Dense(classes, activation='softmax'))
@@ -46,7 +46,7 @@ def SpatialConsensus(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
         weights=weights,
     )
     x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
-    x = Dropout(dropout, name='dropout')(x)
+    # x = Dropout(dropout, name='dropout')(x)
     x = Conv2D(classes, (1, 1),
                    padding='same', name='conv_preds')(x)
     x = Activation('softmax', name='act_softmax')(x)
@@ -73,7 +73,7 @@ def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
         weights=weights,
     )
     x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
-    x = Dropout(dropout, name='dropout')(x)
+    # x = Dropout(dropout, name='dropout')(x)
     x = Conv2D(classes, (1, 1),
                    padding='same', name='conv_preds')(x)
     x = Activation('softmax', name='act_softmax')(x)
@@ -82,18 +82,19 @@ def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
     mobilenet = Model(inputs=mobilenet_no_top.input, outputs=x)
     # mobilenet.summary()
 
-    input_a = Input((3,224,224,3))
-    input_1 = Lambda(lambda x: x[:,0,:,:,:])(input_a)
-    input_2 = Lambda(lambda x: x[:,1,:,:,:])(input_a)
-    input_3 = Lambda(lambda x: x[:,2,:,:,:])(input_a)
+    input_1 = Input((224,224,3))
+    input_2 = Input((224,224,3))
+    input_3 = Input((224,224,3))
 
     y_1 = mobilenet(input_1)
     y_2 = mobilenet(input_2)
     y_3 = mobilenet(input_3)
 
     z = Average()([y_1, y_2, y_3])
+    z = Dropout(dropout, name='dropout')(z)
+    # z = Activation('relu')(z)
 
-    result_model = Model(inputs=input_a, outputs=z)
+    result_model = Model(inputs=[input_1, input_2, input_3], outputs=z)
 
     return result_model
 
@@ -108,7 +109,7 @@ def TemporalLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagen
 
     result_model = Sequential()
     result_model.add(TimeDistributed(mobilenet, input_shape=(seq_len, 224,224,depth)))
-    result_model.add(LSTM(n_neurons, return_sequences=True))
+    result_model.add(LSTM(n_neurons, split_sequences=True))
     result_model.add(Flatten())
     result_model.add(Dropout(dropout))
     result_model.add(Dense(classes, activation='softmax'))
@@ -149,7 +150,8 @@ def mobilenet_remake(name, input_shape, classes, weight=None, non_train=False, d
 
 from keras.callbacks import LearningRateScheduler
 
-def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101', retrain=False, classes=101, cross_index=1, seq_len=3, old_epochs=0, batch_size=16):
+def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101', 
+    retrain=False, classes=101, cross_index=1, seq_len=3, old_epochs=0, batch_size=16, split_sequence=False):
 
     out_file = r'{}database/{}-train{}-split{}.pickle'.format(data_output_path,dataset,seq_len,cross_index)
     valid_file = r'{}database/{}-test{}-split{}.pickle'.format(data_output_path,dataset,seq_len,cross_index)
@@ -197,13 +199,13 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101', retra
 
         history = model.fit_generator(
             gd.getTrainData(
-                keys=keys,batch_size=batch_size,dataset=dataset,classes=classes,train='train',data_type=data_type), 
+                keys=keys,batch_size=batch_size,dataset=dataset,classes=classes,train='train',data_type=data_type,split_sequence=split_sequence), 
             verbose=1, 
             max_queue_size=20, 
             steps_per_epoch=steps, 
             epochs=1,
             validation_data=gd.getTrainData(
-                keys=keys_valid,batch_size=batch_size,dataset=dataset,classes=classes,train='valid',data_type=data_type),
+                keys=keys_valid,batch_size=batch_size,dataset=dataset,classes=classes,train='valid',data_type=data_type,split_sequence=split_sequence),
             validation_steps=validation_steps,
             # callbacks=[lrate]
         )
@@ -221,7 +223,8 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101', retra
         with open('histories/{}_{}_{}_{}e_cr{}'.format(pre_file,seq_len,old_epochs,epochs,cross_index), 'wb') as file_pi:
             pickle.dump(histories, file_pi)
 
-def test_process(model, pre_file, data_type, epochs=20, dataset='ucf101', classes=101, cross_index=1, seq_len=3, batch_size=16):
+def test_process(model, pre_file, data_type, epochs=20, dataset='ucf101', 
+    classes=101, cross_index=1, seq_len=3, batch_size=16, split_sequence=False):
 
     model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,epochs,cross_index))
 
@@ -243,7 +246,7 @@ def test_process(model, pre_file, data_type, epochs=20, dataset='ucf101', classe
 
     y_pred = model.predict_generator(
         gd.getTrainData(
-            keys=keys,batch_size=batch_size,dataset=dataset,classes=classes,train='test',data_type=data_type), 
+            keys=keys,batch_size=batch_size,dataset=dataset,classes=classes,train='test',data_type=data_type,split_sequence=split_sequence), 
         max_queue_size=20, 
         steps=steps)
 

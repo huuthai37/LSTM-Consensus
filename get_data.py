@@ -14,7 +14,7 @@ server = config.server()
 data_output_path = config.data_output_path()
 data_folder_seq = r'{}seq3/'.format(data_output_path)
 
-def getTrainData(keys,batch_size,dataset,classes,train,data_type): 
+def getTrainData(keys,batch_size,dataset,classes,train,data_type,split_sequence=False): 
     """
     mode 1: Single Stream
     mode 2: Two Stream
@@ -25,13 +25,20 @@ def getTrainData(keys,batch_size,dataset,classes,train,data_type):
         for i in range(0, len(keys), batch_size):
 
             if mode == 1:
-                X_train, Y_train = stack_single_sequence(
-                    chunk=keys[i:i+batch_size],
-                    data_type=data_type,
-                    dataset=dataset,
-                    train=train)
+                if not split_sequence:
+                    X_train, Y_train = stack_single_sequence(
+                        chunk=keys[i:i+batch_size],
+                        data_type=data_type,
+                        dataset=dataset,
+                        train=train)
+                else:
+                    X_train, Y_train = stack_single_sequence_split(
+                        chunk=keys[i:i+batch_size],
+                        data_type=data_type,
+                        dataset=dataset,
+                        train=train)
             else:
-                X_train, Y_train=stack_multi_sequence(
+                X_train, Y_train = stack_multi_sequence(
                     chunk=keys[i:i+batch_size],
                     multi_data_type=data_type,
                     dataset=dataset,
@@ -132,6 +139,29 @@ def stack_single_sequence(chunk,data_type,dataset,train):
         sys.exit()
 
     return np.array(stack_return), labels
+
+def stack_single_sequence_split(chunk,data_type,dataset,train):
+    labels = []
+    stack_return1 = []
+    stack_return2 = []
+    stack_return3 = []
+    if data_type[0] == 0:
+        for rgb in chunk:
+            labels.append(rgb[2])
+            rgb_sequence = stack_seq_rgb(rgb[0],rgb[1],dataset,train)
+            stack_return1.append(rgb_sequence[0])
+            stack_return2.append(rgb_sequence[1])
+            stack_return3.append(rgb_sequence[2])
+    else:
+        for opt in chunk:
+            labels.append(opt[2])
+            stack_return.append(stack_seq_optical_flow(opt[0],opt[1],data_type[0],dataset,train))
+
+    if len(stack_return1) < len(chunk):
+        print 'Stacked data error'
+        sys.exit()
+
+    return [np.array(stack_return1), np.array(stack_return2), np.array(stack_return3)], labels
 
 def stack_multi_sequence(chunk,multi_data_type,dataset):
     labels = []

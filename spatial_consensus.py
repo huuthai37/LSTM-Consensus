@@ -8,7 +8,7 @@ parser.add_argument('-e', '--epoch', help='Number of epochs', default=20, type=i
 parser.add_argument('-r', '--retrain', help='Number of old epochs when retrain', default=0, type=int)
 parser.add_argument('-cross', '--cross', help='Cross fold', default=1, type=int)
 parser.add_argument('-s', '--summary', help='Show model', default=0, type=int)
-parser.add_argument('-lr', '--lr', help='Learning rate', default=5e-4, type=float)
+parser.add_argument('-lr', '--lr', help='Learning rate', default=1e-3, type=float)
 parser.add_argument('-decay', '--decay', help='Decay', default=1e-6, type=float)
 parser.add_argument('-dropout', '--dropout', help='Dropout rate', default=0.8, type=float)
 args = parser.parse_args()
@@ -21,8 +21,11 @@ from keras import backend as K
 from keras import optimizers
 
 def consensus_categorical_crossentropy(y_true, y_pred):
-    y_pred = K.clip(y_pred, K.epsilon(), 1.0 - K.epsilon())
+    # y_pred /= K.sum(y_pred, axis=1)
+    # print y_pred.shape
+    # y_pred = K.clip(y_pred, K.epsilon(), 1.0 - K.epsilon())
     # print y_true
+    # print K.sum(y_true * (y_pred - K.logsumexp(y_pred)), axis=-1)
     return -K.sum(y_true * (y_pred - K.logsumexp(y_pred)), axis=-1)
 
 process = args.process
@@ -56,15 +59,15 @@ else:
 result_model = models.SpatialConsensus(
                     seq_len=seq_len, classes=classes, weights=weights, dropout=dropout)
 
+lr = args.lr 
+decay = args.decay
+result_model.compile(loss=consensus_categorical_crossentropy,
+                     optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=False),
+                     metrics=['accuracy'])
+
 if (args.summary == 1):
     result_model.summary()
     sys.exit()
-
-lr = args.lr 
-decay = args.decay
-result_model.compile(loss='categorical_crossentropy',
-                     optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=False),
-                     metrics=['accuracy'])
 
 if train:
     models.train_process(result_model, pre_file, data_type=[0], epochs=epochs, dataset=dataset,

@@ -8,7 +8,7 @@ import keras.backend as K
 from keras.models import Model
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
-from keras.layers import TimeDistributed, Activation
+from keras.layers import TimeDistributed, Activation, AveragePooling1D
 from keras.layers import LSTM, GlobalAveragePooling1D, Reshape, MaxPooling1D, Conv2D
 from keras.applications.mobilenet import MobileNet
 from sklearn.metrics import classification_report
@@ -56,9 +56,11 @@ def SpatialConsensus(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
 
     result_model = Sequential()
     result_model.add(TimeDistributed(mobilenet, input_shape=(seq_len, 224,224,3)))
+    # result_model.add(AveragePooling1D(pool_size=seq_len))
     result_model.add(GlobalAveragePooling1D())
     result_model.add(Dropout(dropout))
-    result_model.add(Activation('linear'))
+    # result_model.add(Flatten())
+    # result_model.add(Activation('linear'))
 
     return result_model
 
@@ -159,7 +161,7 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101', retra
             epochs=1,
             validation_data=gd.getTrainData(
                 keys=keys_valid,batch_size=batch_size,dataset=dataset,classes=classes,train='valid',data_type=data_type),
-            validation_steps=validation_steps
+            validation_steps=validation_steps,
         )
         run_time = time.time() - time_start
 

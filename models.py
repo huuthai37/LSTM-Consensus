@@ -73,12 +73,13 @@ def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
         weights=weights,
     )
     x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
+    
+    # x = Conv2D(classes, (1, 1),
+    #                padding='same', name='conv_preds')(x)
     # x = Dropout(dropout, name='dropout')(x)
-    x = Conv2D(classes, (1, 1),
-                   padding='same', name='conv_preds')(x)
-    x = Activation('softmax', name='act_softmax')(x)
-    x = Reshape((classes,), name='reshape_2')(x)
-    # x = Dense(classes, activation='softmax')(mobilenet_no_top.output)
+    # x = Activation('softmax', name='act_softmax')(x)
+    # x = Reshape((classes,), name='reshape_2')(x)
+    x = Dense(classes, activation='softmax')(mobilenet_no_top.output)
     mobilenet = Model(inputs=mobilenet_no_top.input, outputs=x)
     # mobilenet.summary()
 
@@ -92,7 +93,7 @@ def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
 
     z = Average()([y_1, y_2, y_3])
     z = Dropout(dropout, name='dropout')(z)
-    # z = Activation('relu')(z)
+    z = Activation('relu')(z)
 
     result_model = Model(inputs=[input_1, input_2, input_3], outputs=z)
 

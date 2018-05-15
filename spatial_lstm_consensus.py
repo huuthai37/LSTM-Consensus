@@ -8,6 +8,8 @@ parser.add_argument('-e', '--epoch', help='Number of epochs', default=20, type=i
 parser.add_argument('-r', '--retrain', help='Number of old epochs when retrain', default=0, type=int)
 parser.add_argument('-cross', '--cross', help='Cross fold', default=1, type=int)
 parser.add_argument('-s', '--summary', help='Show model', default=0, type=int)
+parser.add_argument('-lr', '--lr', help='Learning rate', default=1e-3, type=float)
+parser.add_argument('-decay', '--decay', help='Decay', default=1e-6, type=float)
 args = parser.parse_args()
 print args
 
@@ -52,8 +54,10 @@ if (args.summary == 1):
     result_model.summary()
     sys.exit()
 
+lr = args.lr 
+decay = args.decay
 result_model.compile(loss='categorical_crossentropy',
-                     optimizer=optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True),
+                     optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=True),
                      metrics=['accuracy'])
 
 if train:

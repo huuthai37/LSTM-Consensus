@@ -10,6 +10,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import TimeDistributed, Activation, AveragePooling1D
 from keras.layers import LSTM, GlobalAveragePooling1D, Reshape, MaxPooling1D, Conv2D
+from keras.layers import Input, Lambda, Average
 from keras.applications.mobilenet import MobileNet
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
@@ -64,6 +65,38 @@ def SpatialConsensus(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
 
     return result_model
 
+def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
+    mobilenet_no_top = MobileNet(
+        input_shape=(224,224,3),
+        pooling='avg',
+        include_top=False,
+        weights=weights,
+    )
+    x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
+    x = Dropout(dropout, name='dropout')(x)
+    x = Conv2D(classes, (1, 1),
+                   padding='same', name='conv_preds')(x)
+    x = Activation('softmax', name='act_softmax')(x)
+    x = Reshape((classes,), name='reshape_2')(x)
+    # x = Dense(classes, activation='softmax')(mobilenet_no_top.output)
+    mobilenet = Model(inputs=mobilenet_no_top.input, outputs=x)
+    # mobilenet.summary()
+
+    input_a = Input((3,224,224,3))
+    input_1 = Lambda(lambda x: x[:,0,:,:,:])(input_a)
+    input_2 = Lambda(lambda x: x[:,1,:,:,:])(input_a)
+    input_3 = Lambda(lambda x: x[:,2,:,:,:])(input_a)
+
+    y_1 = mobilenet(input_1)
+    y_2 = mobilenet(input_2)
+    y_3 = mobilenet(input_3)
+
+    z = Average()([y_1, y_2, y_3])
+
+    result_model = Model(inputs=input_a, outputs=z)
+
+    return result_model
+
 def TemporalLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5, depth=20):
     mobilenet = mobilenet_remake(
         name='temporal',
@@ -114,6 +147,8 @@ def mobilenet_remake(name, input_shape, classes, weight=None, non_train=False, d
 
     return model
 
+from keras.callbacks import LearningRateScheduler
+
 def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101', retrain=False, classes=101, cross_index=1, seq_len=3, old_epochs=0, batch_size=16):
 
     out_file = r'{}database/{}-train{}-split{}.pickle'.format(data_output_path,dataset,seq_len,cross_index)
@@ -150,6 +185,14 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101', retra
 
         random.shuffle(keys)
 
+        # def exp_decay(epoch, lr):
+        #     print ('Index',epoch, e)
+        #     if (e % 3 == 0) & (e != 0): 
+        #         lr = lr * 0.9
+        #     return lr
+
+        # lrate = LearningRateScheduler(exp_decay, verbose=1)
+
         time_start = time.time()
 
         history = model.fit_generator(
@@ -162,6 +205,7 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101', retra
             validation_data=gd.getTrainData(
                 keys=keys_valid,batch_size=batch_size,dataset=dataset,classes=classes,train='valid',data_type=data_type),
             validation_steps=validation_steps,
+            # callbacks=[lrate]
         )
         run_time = time.time() - time_start
 

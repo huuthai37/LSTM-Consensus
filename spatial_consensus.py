@@ -22,7 +22,7 @@ from keras import optimizers
 
 def consensus_categorical_crossentropy(y_true, y_pred):
     y_pred = K.clip(y_pred, K.epsilon(), 1.0 - K.epsilon())
-    print y_true
+    # print y_true
     return -K.sum(y_true * (y_pred - K.logsumexp(y_pred)), axis=-1)
 
 process = args.process

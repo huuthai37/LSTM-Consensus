@@ -31,7 +31,7 @@ def SpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagene
 
     result_model = Sequential()
     result_model.add(TimeDistributed(mobilenet, input_shape=(seq_len, 224,224,3)))
-    result_model.add(LSTM(n_neurons, split_sequences=True))
+    result_model.add(LSTM(n_neurons, return_sequences=True))
     result_model.add(Flatten())
     result_model.add(Dropout(dropout))
     result_model.add(Dense(classes, activation='softmax'))

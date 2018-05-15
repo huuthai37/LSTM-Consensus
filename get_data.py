@@ -92,7 +92,7 @@ def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,tr
     u = data_folder_opt + 'u/' + name_video + '/frame'
     v = data_folder_opt + 'v/' + name_video + '/frame'
 
-    print (u,v)
+    # print (u,v)
 
     return_data = []
 
@@ -121,6 +121,7 @@ def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,tr
 
             if (img_u is None) | (img_v is None):
                 print 'Error render optical flow'
+                print(u + str(render[k] + 5 + i).zfill(6) + '.jpg')
                 sys.exit()
             img_u = cv2.resize(img_u, (340, 256))
             img_v = cv2.resize(img_v, (340, 256))

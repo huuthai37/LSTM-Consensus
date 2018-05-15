@@ -4,17 +4,21 @@ import random
 import time
 import numpy as np
 import get_data as gd
+import keras.backend as K
 from keras.models import Model
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import TimeDistributed, Activation
-from keras.layers import LSTM, AveragePooling1D, Reshape, MaxPooling1D, Conv2D
+from keras.layers import LSTM, GlobalAveragePooling1D, Reshape, MaxPooling1D, Conv2D
 from keras.applications.mobilenet import MobileNet
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
 server = config.server()
 data_output_path = config.data_output_path()
+
+def relu6(x):
+    return K.relu(x, max_value=6)
 
 def SpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5):
     mobilenet = MobileNet(
@@ -41,17 +45,18 @@ def SpatialConsensus(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
         weights=weights,
     )
     x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
-    x = Dropout(dropout, name='dropout')(x)
+    # x = Dropout(dropout, name='dropout')(x)
     x = Conv2D(classes, (1, 1),
                    padding='same', name='conv_preds')(x)
     x = Activation('softmax', name='act_softmax')(x)
     x = Reshape((classes,), name='reshape_2')(x)
     mobilenet = Model(inputs=mobilenet_no_top.input, outputs=x)
+    # mobilenet.summary()
 
     result_model = Sequential()
     result_model.add(TimeDistributed(mobilenet, input_shape=(seq_len, 224,224,3)))
-    result_model.add(AveragePooling1D(pool_size=seq_len))
-    result_model.add(Flatten())
+    result_model.add(GlobalAveragePooling1D())
+    result_model.add(Dropout(dropout))
     result_model.add(Activation('softmax'))
 
     return result_model

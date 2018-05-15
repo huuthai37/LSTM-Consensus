@@ -7,7 +7,7 @@ import get_data as gd
 import keras.backend as K
 from keras.models import Model
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Dense, Dropout, Flatten, ZeroPadding2D
 from keras.layers import TimeDistributed, Activation, AveragePooling1D
 from keras.layers import LSTM, GlobalAveragePooling1D, Reshape, MaxPooling1D, Conv2D
 from keras.layers import Input, Lambda, Average

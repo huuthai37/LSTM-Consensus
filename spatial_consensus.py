@@ -10,6 +10,7 @@ parser.add_argument('-cross', '--cross', help='Cross fold', default=1, type=int)
 parser.add_argument('-s', '--summary', help='Show model', default=0, type=int)
 parser.add_argument('-lr', '--lr', help='Learning rate', default=1e-3, type=float)
 parser.add_argument('-decay', '--decay', help='Decay', default=1e-6, type=float)
+parser.add_argument('-dropout', '--dropout', help='Dropout rate', default=0.8, type=float)
 args = parser.parse_args()
 print args
 
@@ -45,7 +46,7 @@ dataset = args.dataset
 pre_file = 'spatial_consensus'
 
 seq_len = 3
-dropout = 0.8
+dropout = args.dropout
 
 if train & (not retrain):
     weights = 'imagenet'

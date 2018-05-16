@@ -178,7 +178,7 @@ def stack_single_sequence(chunk,data_type,dataset,train):
     mode_crop = random.randint(0, 1)
     flip = random.randint(0, 1)
     mode_corner_crop = random.randint(0, 4)
-    
+
     if train != 'train':
         size = 224
     if dataset == 'ucf101':
@@ -324,9 +324,9 @@ def random_flip(image, size, flip):
         image_flip = cv2.flip(image_flip, 1)
     return image_flip
 
-def random_crop(image, size, mode_crop, mode_corner_crop, x, y):
+def random_crop(image, size, mode_crop, mode_corner_crop, x, y,w=340,h=256):
     if mode_crop == 0:
-        return random_corner_crop(image, size, mode_corner_crop)
+        return random_corner_crop(image, size, mode_corner_crop,w,h)
     else:
         return image_crop(image, x, y, size)
 

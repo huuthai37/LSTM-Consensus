@@ -91,6 +91,7 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
             rgb = rgb.astype('float16',copy=False)
             rgb/=255
             rgb_nor = rgb - rgb.mean(axis=2, keepdims=True)
+            print rgb_nor.shape
         else:
             print(mode_crop, flip, mode_corner_crop, size, height, x, y)
             sys.exit()

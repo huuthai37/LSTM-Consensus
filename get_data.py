@@ -53,6 +53,9 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
     return_stack = []
     data_folder_rgb = r'{}{}-rgb-3/'.format(data_output_path,dataset)
 
+    if dataset == 'hmdb51':
+        path_video = path_video.split('/')[1]
+
     size = pre_random[0]
     mode_crop = pre_random[1]
     flip = pre_random[2]
@@ -61,9 +64,13 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
     y = pre_random[5]
 
     for i in render_rgb:
-        rgb = cv2.imread(data_folder_rgb + path_video + '/' + str(i+10) + '.jpg')
+        if dataset == 'ucf101':
+            i_index = str(i+10)
+        else:
+            i_index = 'frame' + str(i+10).zfill(6)
+        rgb = cv2.imread(data_folder_rgb + path_video + '/' + i_index + '.jpg')
         if rgb is None:
-            print data_folder_rgb + path_video + '/' + str(i+10) + '.jpg'
+            print data_folder_rgb + path_video + '/' + i_index + '.jpg'
             sys.exit()
         if train == 'train':
             rgb = random_crop(rgb, size, mode_crop, mode_corner_crop, x, y)
@@ -112,12 +119,11 @@ def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,tr
     for k in range(len_render_opt):
         nstack = np.zeros((256,340,20))
         for i in range(10):
-            if server:
-                img_u = cv2.imread(u + str(render[k] + 5 + i).zfill(6) + '.jpg', 0)
-                img_v = cv2.imread(v + str(render[k] + 5 + i).zfill(6) + '.jpg', 0)
-            else:
-                img_u = np.ones((240,320))
-                img_v = np.ones((240,320))
+            img_u = cv2.imread(u + str(render[k] + 5 + i).zfill(6) + '.jpg', 0)
+            img_v = cv2.imread(v + str(render[k] + 5 + i).zfill(6) + '.jpg', 0)
+            
+            # img_u = np.ones((240,320))
+            # img_v = np.ones((240,320))
 
             if (img_u is None) | (img_v is None):
                 print 'Error render optical flow'

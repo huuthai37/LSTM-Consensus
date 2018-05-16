@@ -131,7 +131,7 @@ with open(text_file) as f:
                         height, width, channel = frame.shape
                         if height < width:
                             resize_img = cv2.resize(frame, (256 * width / height, 256))
-                        else
+                        else:
                             resize_img = cv2.resize(frame, (256, 256 * height / width))
                     else:
                         resize_img = cv2.resize(frame, (340, 256))

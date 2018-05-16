@@ -44,6 +44,7 @@ with open(data_file,'rb') as f1:
 train_data = []
 test_data = []
 train_name = []
+test_name = []
 
 with open(train_file) as f:
     for line in f:

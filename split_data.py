@@ -55,12 +55,22 @@ with open(train_file) as f:
         full_name = folder_video + '/' + name_video
         train_name.append(full_name)
 
+with open(test_file) as f:
+    for line in f:
+        arr_line = line.rstrip().split(' ')[0] # return folder/subfolder/name.mpg
+        path_video = arr_line.split('/') # return array (folder,subfolder,name.mpg)
+        num_name = len(path_video) # return 3
+        name_video = path_video[num_name - 1].split('.')[0] # return name ko co .mpg
+        folder_video = path_video[0]
+        full_name = folder_video + '/' + name_video
+        test_name.append(full_name)
+
 length = len(data)
 data_name = []
 for i in range(length):
     if (data[i][0] in train_name):
         train_data.append(data[i])
-    else:
+    elif (data[i][0] in test_name):
         test_data.append(data[i])
 
 print 'Generate {} train samples for {} dataset'.format(len(train_data),dataset)

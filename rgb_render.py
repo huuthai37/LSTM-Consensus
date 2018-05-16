@@ -85,7 +85,10 @@ with open(text_file) as f:
             os.makedirs(path + name_video) #tao data-output/foldet/name/
 
         length = count_frames(data_input_folder + arr_line)
-        cap = cv2.VideoCapture(data_input_folder + arr_line)
+            # length = count_frames(data_input_folder + path_video[num_name - 1])
+        
+        if not debug:
+            cap = cv2.VideoCapture(data_input_folder + arr_line)
 
         divide = length / num_seq
         train_render = []
@@ -125,14 +128,14 @@ with open(text_file) as f:
                 i += 1  
                 if ((i-10) in train_render) | (i in test_render):
                     resize_img = cv2.resize(frame, (340, 256))
-                    cv2.imwrite('{}.jpg'.format(i),resize_img)   
+                    cv2.imwrite('{}.jpg'.format(i),resize_img)  
+            # Giai phong capture
+            cap.release() 
 
         count += 1
         if (count % 100 == 0):
             print r'Created {} samples'.format(count)
 
-        # Giai phong capture
-        cap.release()
 
 print 'Generate {} samples for {} dataset'.format(len(data),dataset)
 

@@ -72,8 +72,21 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
         if rgb is None:
             print data_folder_rgb + path_video + '/' + i_index + '.jpg'
             sys.exit()
+
+        hx = 256
+        wx = 340
+        if x == -1:
+            hx, wx, cx = rgb.shape
+            wx = 256 * wx/hx 
+            rgb = cv2.resize(rgb, (wx, 256))
+            x = random.randint(0, wx-size)
+            y = random.randint(0, 256-size)
+            if train != 'train':
+                x = (wx-size)/2
+                y = (256-size)/2
+
         if train == 'train':
-            rgb = random_crop(rgb, size, mode_crop, mode_corner_crop, x, y)
+            rgb = random_crop(rgb, size, mode_crop, mode_corner_crop, x, y, wx, hx)
             rgb = random_flip(rgb, size, flip)
         else:
             rgb = image_crop(rgb, x, y, size)
@@ -165,12 +178,19 @@ def stack_single_sequence(chunk,data_type,dataset,train):
     mode_crop = random.randint(0, 1)
     flip = random.randint(0, 1)
     mode_corner_crop = random.randint(0, 4)
-    x = random.randint(0, 340-size)
-    y = random.randint(0, 256-size)
+    
     if train != 'train':
         size = 224
-        x = (340-size)/2
-        y = (256-size)/2
+    if dataset == 'ucf101':
+        x = random.randint(0, 340-size)
+        y = random.randint(0, 256-size)
+        if train != 'train':
+            x = (340-size)/2
+            y = (256-size)/2
+    else:
+        x = -1
+        y = -1
+
     pre_random = [size, mode_crop, flip, mode_corner_crop, x, y]
 
     labels = []
@@ -310,17 +330,17 @@ def random_crop(image, size, mode_crop, mode_corner_crop, x, y):
     else:
         return image_crop(image, x, y, size)
 
-def random_corner_crop(image, size, mode_corner_crop):
+def random_corner_crop(image, size, mode_corner_crop,w=340,h=256):
     if mode_corner_crop == 0:
         return image_crop(image, 0, 0, size)
     elif mode_corner_crop == 1:
-        return image_crop(image, 340-size, 0, size)
+        return image_crop(image, w-size, 0, size)
     elif mode_corner_crop == 2:
-        return image_crop(image, 0, 256-size, size)
+        return image_crop(image, 0, h-size, size)
     elif mode_corner_crop == 3:
-        return image_crop(image, 340-size, 256-size, size)
+        return image_crop(image, w-size, h-size, size)
     else:
-        return image_crop(image, (340-size)/2, (256-size)/2, size)
+        return image_crop(image, (w-size)/2, (h-size)/2, size)
        
 def image_crop(image, x, y, size):
     return image[y:y+size,x:x+size,:]

@@ -67,7 +67,7 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
         if dataset == 'ucf101':
             i_index = str(i+10)
         else:
-            i_index = 'frame' + str(i+10).zfill(6)
+            i_index = 'frame' + str(i+11).zfill(6)
         rgb = cv2.imread(data_folder_rgb + path_video + '/' + i_index + '.jpg')
         if rgb is None:
             print data_folder_rgb + path_video + '/' + i_index + '.jpg'

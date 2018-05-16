@@ -53,9 +53,6 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
     return_stack = []
     data_folder_rgb = r'{}{}-rgb-3/'.format(data_output_path,dataset)
 
-    if dataset == 'hmdb51':
-        path_video = path_video.split('/')[1]
-
     size = pre_random[0]
     mode_crop = pre_random[1]
     flip = pre_random[2]
@@ -64,10 +61,7 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
     y = pre_random[5]
 
     for i in render_rgb:
-        if dataset == 'ucf101':
-            i_index = str(i+10)
-        else:
-            i_index = 'frame' + str(i+11).zfill(6)
+        i_index = str(i+10)
         rgb = cv2.imread(data_folder_rgb + path_video + '/' + i_index + '.jpg')
         if rgb is None:
             print data_folder_rgb + path_video + '/' + i_index + '.jpg'
@@ -77,13 +71,11 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
         wx = 340
         if x == -1:
             hx, wx, cx = rgb.shape
-            wx = 256 * wx/hx 
-            rgb = cv2.resize(rgb, (wx, 256))
             x = random.randint(0, wx-size)
-            y = random.randint(0, 256-size)
+            y = random.randint(0, hx-size)
             if train != 'train':
                 x = (wx-size)/2
-                y = (256-size)/2
+                y = (hx-size)/2
 
         if train == 'train':
             rgb = random_crop(rgb, size, mode_crop, mode_corner_crop, x, y, wx, hx)

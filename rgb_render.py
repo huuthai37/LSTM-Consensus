@@ -127,7 +127,14 @@ with open(text_file) as f:
                     break
                 i += 1  
                 if ((i-10) in train_render) | (i in test_render):
-                    resize_img = cv2.resize(frame, (340, 256))
+                    if dataset == 'hmdb51':
+                        height, width, channel = frame.shape
+                        if height < width:
+                            resize_img = cv2.resize(frame, (256 * width / height, 256))
+                        else
+                            resize_img = cv2.resize(frame, (256, 256 * height / width))
+                    else:
+                        resize_img = cv2.resize(frame, (340, 256))
                     cv2.imwrite('{}.jpg'.format(i),resize_img)  
             # Giai phong capture
             cap.release() 

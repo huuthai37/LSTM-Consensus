@@ -60,6 +60,9 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
     x = pre_random[4]
     y = pre_random[5]
 
+    hx = 256
+    wx = 340
+
     for i in render_rgb:
         i_index = str(i+10)
         rgb = cv2.imread(data_folder_rgb + path_video + '/' + i_index + '.jpg')
@@ -67,8 +70,6 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
             print data_folder_rgb + path_video + '/' + i_index + '.jpg'
             sys.exit()
 
-        hx = 256
-        wx = 340
         if x == -1:
             hx, wx, cx = rgb.shape
             x = random.randint(0, wx-size)
@@ -91,7 +92,7 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
             rgb = rgb.astype('float16',copy=False)
             rgb/=255
             rgb_nor = rgb - rgb.mean(axis=2, keepdims=True)
-            print rgb_nor.shape
+            # print rgb_nor.shape
         else:
             print(mode_crop, flip, mode_corner_crop, size, height, x, y)
             sys.exit()

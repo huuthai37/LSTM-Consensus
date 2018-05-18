@@ -205,6 +205,24 @@ def stack_single_sequence(chunk,data_type,dataset,train):
     return np.array(stack_return), labels
 
 def stack_single_sequence_split(chunk,data_type,dataset,train):
+    size = random_size()
+    mode_crop = random.randint(0, 1)
+    flip = random.randint(0, 1)
+    mode_corner_crop = random.randint(0, 4)
+
+    if train != 'train':
+        size = 224
+    if dataset == 'ucf101':
+        x = random.randint(0, 340-size)
+        y = random.randint(0, 256-size)
+        if train != 'train':
+            x = (340-size)/2
+            y = (256-size)/2
+    else:
+        x = -1
+        y = -1
+
+    pre_random = [size, mode_crop, flip, mode_corner_crop, x, y]
     labels = []
     stack_return1 = []
     stack_return2 = []
@@ -212,7 +230,7 @@ def stack_single_sequence_split(chunk,data_type,dataset,train):
     if data_type[0] == 0:
         for rgb in chunk:
             labels.append(rgb[2])
-            rgb_sequence = stack_seq_rgb(rgb[0],rgb[1],dataset,train)
+            rgb_sequence = stack_seq_rgb(rgb[0],rgb[1],pre_random,dataset,train)
             stack_return1.append(rgb_sequence[0])
             stack_return2.append(rgb_sequence[1])
             stack_return3.append(rgb_sequence[2])

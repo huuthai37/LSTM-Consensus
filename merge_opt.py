@@ -16,7 +16,6 @@ import pickle
 
 # Lay tuy chon 
 dataset = args.dataset
-cross_index = args.cross
 num_seq = args.segment
 if args.debug == 1:
     debug = True

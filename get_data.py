@@ -102,10 +102,10 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
     return np.array(return_stack)
 
 def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,train):
-    data_folder_opt = r'{}{}-opt/'.format(data_output_path,dataset)
+    data_folder_opt = r'{}{}-seq-opt/'.format(data_output_path,dataset)
     name_video = path_video.split('/')[1]
-    u = data_folder_opt + 'u/' + name_video + '/frame'
-    v = data_folder_opt + 'v/' + name_video + '/frame'
+    u = data_folder_opt + 'u/' + name_video + '/'
+    v = data_folder_opt + 'v/' + name_video + '/'
 
     # print (u,v)
 
@@ -126,21 +126,15 @@ def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,tr
 
     for k in range(len_render_opt):
         nstack = np.zeros((256,340,20))
+        img_u = cv2.imread(u + str(k) + '.jpg', 0)
+        img_v = cv2.imread(v + str(k) + '.jpg', 0) 
+        if (img_u is None) | (img_v is None):
+            print 'Error render optical flow'
+            print(u + str(render[k] + 5 + i).zfill(6) + '.jpg')
+            sys.exit()
         for i in range(10):
-            img_u = cv2.imread(u + str(render[k] + 5 + i).zfill(6) + '.jpg', 0)
-            img_v = cv2.imread(v + str(render[k] + 5 + i).zfill(6) + '.jpg', 0)
-            
-            # img_u = np.ones((240,320))
-            # img_v = np.ones((240,320))
-
-            if (img_u is None) | (img_v is None):
-                print 'Error render optical flow'
-                print(u + str(render[k] + 5 + i).zfill(6) + '.jpg')
-                sys.exit()
-            img_u = cv2.resize(img_u, (340, 256))
-            img_v = cv2.resize(img_v, (340, 256))
-            nstack[:,:,2*i] = img_u
-            nstack[:,:,2*i+1] = img_v
+            nstack[:,:,2*i] = img_u[(256*i):(256*(i+1)),:]
+            nstack[:,:,2*i+1] = img_v[(256*i):(256*(i+1)),:]
 
         if train == 'train':
             nstack = random_crop(nstack, size, mode_crop, mode_corner_crop, x, y)
@@ -168,6 +162,74 @@ def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,tr
         return_data.append(nstack_nor)
 
     return (return_data)
+
+# def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,train):
+#     data_folder_opt = r'{}{}-opt/'.format(data_output_path,dataset)
+#     name_video = path_video.split('/')[1]
+#     u = data_folder_opt + 'u/' + name_video + '/frame'
+#     v = data_folder_opt + 'v/' + name_video + '/frame'
+
+#     # print (u,v)
+
+#     return_data = []
+
+#     size = pre_random[0]
+#     mode_crop = pre_random[1]
+#     flip = pre_random[2]
+#     mode_corner_crop = pre_random[3]
+#     x = pre_random[4]
+#     y = pre_random[5]
+
+#     if (render_opt[0] >= 0):
+#         render = render_opt
+#     else:
+#         render = [render_opt[1]]
+#     len_render_opt = len(render)
+
+#     for k in range(len_render_opt):
+#         nstack = np.zeros((256,340,20))
+#         for i in range(10):
+#             img_u = cv2.imread(u + str(render[k] + 5 + i).zfill(6) + '.jpg', 0)
+#             img_v = cv2.imread(v + str(render[k] + 5 + i).zfill(6) + '.jpg', 0)
+            
+#             # img_u = np.ones((240,320))
+#             # img_v = np.ones((240,320))
+
+#             if (img_u is None) | (img_v is None):
+#                 print 'Error render optical flow'
+#                 print(u + str(render[k] + 5 + i).zfill(6) + '.jpg')
+#                 sys.exit()
+#             img_u = cv2.resize(img_u, (340, 256))
+#             img_v = cv2.resize(img_v, (340, 256))
+#             nstack[:,:,2*i] = img_u
+#             nstack[:,:,2*i+1] = img_v
+
+#         if train == 'train':
+#             nstack = random_crop(nstack, size, mode_crop, mode_corner_crop, x, y)
+#             nstack = random_flip(nstack, size, flip)
+#         else:
+#             nstack = image_crop(nstack, x, y, size)
+
+#         height, width, channel = nstack.shape
+#         if height == size:
+#             if size != 224:
+#                 nstack = cv2.resize(nstack, (224, 224))
+#             # print size
+#             nstack = nstack.astype('float16',copy=False)
+#             nstack/=255
+#             # nstack_nor = nstack - nstack.mean(axis=2, keepdims=True)
+#             nstack_nor = nstack - nstack.mean()
+#         else:
+#             print(mode_crop, flip, mode_corner_crop, size, height, x, y)
+#             sys.exit()
+
+#         return_data.append(nstack_nor)
+
+#     if (len_render_opt == 1):
+#         return_data.append(nstack_nor)
+#         return_data.append(nstack_nor)
+
+#     return (return_data)
 
 def stack_single_sequence(chunk,data_type,dataset,train):
     size = random_size()

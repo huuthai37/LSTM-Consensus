@@ -155,7 +155,8 @@ def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,tr
             # print size
             nstack = nstack.astype('float16',copy=False)
             nstack/=255
-            nstack_nor = nstack - nstack.mean(axis=2, keepdims=True)
+            # nstack_nor = nstack - nstack.mean(axis=2, keepdims=True)
+            nstack_nor = nstack - nstack.mean()
         else:
             print(mode_crop, flip, mode_corner_crop, size, height, x, y)
             sys.exit()

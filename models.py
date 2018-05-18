@@ -93,7 +93,7 @@ def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
 
     z = Average()([y_1, y_2, y_3])
     z = Dropout(dropout, name='dropout')(z)
-    z = Activation('relu')(z)
+    z = Activation('softmax')(z)
 
     result_model = Model(inputs=[input_1, input_2, input_3], outputs=z)
 

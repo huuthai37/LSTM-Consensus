@@ -35,8 +35,8 @@ with open(data_file,'rb') as f1:
     data = pickle.load(f1)
 
 length_data = len(data)
-data_folder_opt = r'{}{}-opt/'.format(data_output_path,dataset)
-data_folder_seq_opt = r'{}{}-seq-opt/'.format(data_output_path,dataset)
+data_folder_opt = r'{}{}-opt/'.format(output_path,dataset)
+data_folder_seq_opt = r'{}{}-seq-opt/'.format(output_path,dataset)
 
 if not os.path.isdir(data_folder_seq_opt + 'u'):
     os.makedirs(data_folder_seq_opt + 'u') # tao data_folder_seq_opt + 'u'/

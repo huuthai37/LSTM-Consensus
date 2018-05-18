@@ -48,19 +48,19 @@ if not os.path.isdir(data_folder_seq_opt + 'v'):
     print 'Create directory ' + data_folder_seq_opt + 'v'
 
 for l in range(length_data):
-	path_video = data[l][0]
-	render_opt = data[l][1]
+    path_video = data[l][0]
+    render_opt = data[l][1]
     name_video = path_video.split('/')[1]
     u = data_folder_opt + 'u/' + name_video + '/frame'
     v = data_folder_opt + 'v/' + name_video + '/frame'
 
     if not os.path.isdir(data_folder_seq_opt + 'u/' + name_video):
-	    os.makedirs(data_folder_seq_opt + 'u/' + name_video) # tao data_folder_seq_opt + 'u/' + name_video/
-	    print 'Create directory ' + data_folder_seq_opt + 'u/' + name_video
+        os.makedirs(data_folder_seq_opt + 'u/' + name_video) # tao data_folder_seq_opt + 'u/' + name_video/
+        print 'Create directory ' + data_folder_seq_opt + 'u/' + name_video
 
     if not os.path.isdir(data_folder_seq_opt + 'v/' + name_video):
-	    os.makedirs(data_folder_seq_opt + 'v/' + name_video) # tao data_folder_seq_opt + 'v/' + name_video/
-	    print 'Create directory ' + data_folder_seq_opt + 'v/' + name_video
+        os.makedirs(data_folder_seq_opt + 'v/' + name_video) # tao data_folder_seq_opt + 'v/' + name_video/
+        print 'Create directory ' + data_folder_seq_opt + 'v/' + name_video
 
     return_data = []
 
@@ -86,8 +86,8 @@ for l in range(length_data):
                 sys.exit()
             hh, ww = img_u.shape
             if (hh != 256) | (ww != 340):
-            	img_u = cv2.resize(img_u, (340, 256))
-            	img_v = cv2.resize(img_v, (340, 256))
+                img_u = cv2.resize(img_u, (340, 256))
+                img_v = cv2.resize(img_v, (340, 256))
             nstack_u[(256*i):(256*(i+1)),:] = img_u
             nstack_v[(256*i):(256*(i+1)),:] = img_v
 
@@ -97,7 +97,7 @@ for l in range(length_data):
         cv2.imwrite('{}.jpg'.format(k),nstack_v)
 
     if l%1000 == 0:
-    	print l
+        print l
 
 
 

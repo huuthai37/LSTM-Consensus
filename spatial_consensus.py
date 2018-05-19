@@ -58,7 +58,7 @@ if train & (not retrain):
 else:
     weights = None
 
-result_model = models.SpatialConsensus2(
+result_model = models.SpatialConsensus(
                     seq_len=seq_len, classes=classes, weights=weights, dropout=dropout)
 
 lr = args.lr 

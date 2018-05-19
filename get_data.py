@@ -98,7 +98,8 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
             print(mode_crop, flip, mode_corner_crop, size, height, x, y)
             sys.exit()
 
-        return_stack.append(rgb_nor)
+        return_stack.append(rgb)
+        # return_stack.append(rgb_nor)
     return np.array(return_stack)
 
 def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,train):

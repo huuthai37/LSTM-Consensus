@@ -10,7 +10,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, ZeroPadding2D
 from keras.layers import TimeDistributed, Activation, AveragePooling1D
 from keras.layers import LSTM, GlobalAveragePooling1D, Reshape, MaxPooling1D, Conv2D
-from keras.layers import Input, Lambda, Average
+from keras.layers import Input, Lambda, Average, average
 from keras.applications.mobilenet import MobileNet
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
@@ -72,14 +72,14 @@ def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
         include_top=False,
         weights=weights,
     )
-    x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
+    # x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
     
     # x = Conv2D(classes, (1, 1),
     #                padding='same', name='conv_preds')(x)
-    x = Dropout(dropout, name='dropout')(x)
+    x = Dropout(dropout, name='dropout')(mobilenet_no_top.output)
     # x = Activation('softmax', name='act_softmax')(x)
     # x = Reshape((classes,), name='reshape_2')(x)
-    x = Dense(classes, activation='softmax')(mobilenet_no_top.output)
+    x = Dense(classes, activation='softmax')(x)
     mobilenet = Model(inputs=mobilenet_no_top.input, outputs=x)
     # mobilenet.summary()
 
@@ -91,8 +91,8 @@ def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
     y_2 = mobilenet(input_2)
     y_3 = mobilenet(input_3)
 
-    z = Average()([y_1, y_2, y_3])
-    z = Dropout(dropout, name='dropout')(z)
+    z = average([y_1, y_2, y_3])
+    # z = Dropout(dropout, name='dropout')(z)
 #     z = Activation('softmax')(z)
 
     result_model = Model(inputs=[input_1, input_2, input_3], outputs=z)

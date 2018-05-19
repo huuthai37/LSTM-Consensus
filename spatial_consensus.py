@@ -22,7 +22,7 @@ from keras import optimizers
 import tensorflow as tf
 
 def consensus_categorical_crossentropy(y_true, y_pred):
-    y_pred = K.softmax(y_pred, axis=-1)
+    y_pred = tf.nn.softmax(y_pred, axis=-1)
     # y_pred /= tf.reduce_sum(y_pred, len(y_pred.get_shape()) - 1, True)
     # print y_pred.shape
     # y_pred = K.clip(y_pred, K.epsilon(), 1.0 - K.epsilon())

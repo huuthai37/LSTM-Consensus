@@ -45,13 +45,13 @@ def SpatialConsensus(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
         include_top=False,
         weights=weights,
     )
-    x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
-    x = Dropout(dropout, name='dropout')(x)
-    x = Conv2D(classes, (1, 1),
-                   padding='same', name='conv_preds')(x)
-    x = Activation('softmax', name='act_softmax')(x)
+    # x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
+    x = Dropout(dropout, name='dropout')(mobilenet_no_top.output)
+    # x = Conv2D(classes, (1, 1),
+    #                padding='same', name='conv_preds')(x)
+    # x = Activation('softmax', name='act_softmax')(x)
     # x = Reshape((classes,), name='reshape_2')(x)
-    # x = Dense(classes, activation='softmax')(mobilenet_no_top.output)
+    x = Dense(classes, activation='softmax')(x)
     mobilenet = Model(inputs=mobilenet_no_top.input, outputs=x)
     # mobilenet.summary()
 

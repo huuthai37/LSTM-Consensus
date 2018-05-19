@@ -45,21 +45,21 @@ def SpatialConsensus(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
         include_top=False,
         weights=weights,
     )
-    x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.lyers[-1].output)
-    # x = Dropout(dropout, name='dropout')(x)
+    x = Reshape((1,1,1024), name='reshape_1')(mobilenet_no_top.output)
+    x = Dropout(dropout, name='dropout')(x)
     x = Conv2D(classes, (1, 1),
                    padding='same', name='conv_preds')(x)
     x = Activation('softmax', name='act_softmax')(x)
     # x = Reshape((classes,), name='reshape_2')(x)
     # x = Dense(classes, activation='softmax')(mobilenet_no_top.output)
-    mobilenet = Model(inputs=Input((224,224,3)), outputs=x)
+    mobilenet = Model(inputs=mobilenet_no_top.input, outputs=x)
     # mobilenet.summary()
 
     result_model = Sequential()
     result_model.add(TimeDistributed(mobilenet, input_shape=(seq_len, 224,224,3)))
     # result_model.add(AveragePooling1D(pool_size=seq_len))
     result_model.add(GlobalAveragePooling1D())
-    result_model.add(Dropout(dropout))
+    # result_model.add(Dropout(dropout))
     # result_model.add(Flatten())
     # result_model.add(Activation('linear'))
 
@@ -76,11 +76,11 @@ def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
     
     # x = Conv2D(classes, (1, 1),
     #                padding='same', name='conv_preds')(x)
-    x = Dropout(dropout, name='dropout')(mobilenet_no_top.layers[-1].output)
+    x = Dropout(dropout, name='dropout')(mobilenet_no_top.output)
     # x = Activation('softmax', name='act_softmax')(x)
     # x = Reshape((classes,), name='reshape_2')(x)
     x = Dense(classes, activation='softmax')(x)
-    mobilenet = Model(inputs=Input((224,224,3)), outputs=x)
+    mobilenet = Model(inputs=mobilenet_no_top.input, outputs=x)
     # mobilenet.summary()
 
     input_1 = Input((224,224,3))

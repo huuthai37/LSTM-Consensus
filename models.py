@@ -76,7 +76,7 @@ def SpatialConsensus2(seq_len=3, classes=101, weights='imagenet', dropout=0.5):
     
     # x = Conv2D(classes, (1, 1),
     #                padding='same', name='conv_preds')(x)
-    x = Dropout(dropout, name='dropout')(mobilenet_no_top.output)
+    x = Dropout(dropout, name='dropout')(mobilenet_no_top.layers[-1].output)
     # x = Activation('softmax', name='act_softmax')(x)
     # x = Reshape((classes,), name='reshape_2')(x)
     x = Dense(classes, activation='softmax')(x)

@@ -23,9 +23,9 @@ import tensorflow as tf
 
 def consensus_categorical_crossentropy(y_true, y_pred):
     # y_pred = tf.nn.softmax(y_pred, axis=-1)
-    # y_pred /= tf.reduce_sum(y_pred, len(y_pred.get_shape()) - 1, True)
+    y_pred /= tf.reduce_sum(y_pred, len(y_pred.get_shape()) - 1, True)
     # print y_pred.shape
-    # y_pred = K.clip(y_pred, K.epsilon(), 1.0 - K.epsilon())
+    y_pred = K.clip(y_pred, K.epsilon(), 1.0 - K.epsilon())
     # print y_true
     # print K.sum(y_true * (y_pred - K.logsumexp(y_pred)), axis=-1)
     return -tf.reduce_sum(y_true * (y_pred - K.logsumexp(y_pred)), len(y_pred.get_shape()) - 1)
@@ -63,8 +63,8 @@ result_model = models.SpatialConsensus2(
 
 lr = args.lr 
 decay = args.decay
-result_model.compile(loss='categorical_crossentropy',
-                     optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=True),
+result_model.compile(loss=consensus_categorical_crossentropy,
+                     optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=False),
                      metrics=['accuracy'])
 
 if (args.summary == 1):

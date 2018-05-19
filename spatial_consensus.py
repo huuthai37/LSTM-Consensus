@@ -63,7 +63,7 @@ result_model = models.SpatialConsensus(
 
 lr = args.lr 
 decay = args.decay
-result_model.compile(loss='categorical_crossentropy',
+result_model.compile(loss=consensus_categorical_crossentropy,
                      optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=False),
                      metrics=['accuracy'])
 

@@ -19,7 +19,7 @@ import config
 import models
 from keras import backend as K
 from keras import optimizers
-import tensorflow
+import tensorflow as tf
 
 def consensus_categorical_crossentropy(y_true, y_pred):
     y_pred /= tf.reduce_sum(y_pred, len(y_pred.get_shape()) - 1, True)

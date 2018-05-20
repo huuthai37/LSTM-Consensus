@@ -39,7 +39,7 @@ dataset = args.dataset
 pre_file = 'resnet_spatial_lstm_consensus'
 
 seq_len = 3
-n_neurons = 128
+n_neurons = 256
 dropout = 0.5
 
 if train & (not retrain):

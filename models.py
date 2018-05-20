@@ -13,7 +13,7 @@ from keras.layers import LSTM, GlobalAveragePooling1D, Reshape, MaxPooling1D, Co
 from keras.layers import Input, Lambda, Average, average
 from keras.applications.mobilenet import MobileNet
 from keras.applications.inception_v3 import InceptionV3
-from keras.applications.densenet import DenseNet169
+from keras.applications.densenet import DenseNet169, DenseNet121, DenseNet201
 from keras.applications.resnet50 import ResNet50
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
@@ -58,13 +58,28 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
 
     return result_model
 
-def DenseNetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5):
-    inception = DenseNet169(
-        input_shape=(224,224,3),
-        pooling='avg',
-        include_top=False,
-        weights=weights,
-    )
+def DenseNetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5, id=121):
+    if id == 169:
+        inception = DenseNet169(
+            input_shape=(224,224,3),
+            pooling='avg',
+            include_top=False,
+            weights=weights,
+        )
+    elif id == 201:
+        inception = DenseNet201(
+            input_shape=(224,224,3),
+            pooling='avg',
+            include_top=False,
+            weights=weights,
+        )
+    else:
+        inception = DenseNet121(
+            input_shape=(224,224,3),
+            pooling='avg',
+            include_top=False,
+            weights=weights,
+        )
 
     result_model = Sequential()
     result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))

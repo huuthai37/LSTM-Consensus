@@ -13,6 +13,7 @@ from keras.layers import LSTM, GlobalAveragePooling1D, Reshape, MaxPooling1D, Co
 from keras.layers import Input, Lambda, Average, average
 from keras.applications.mobilenet import MobileNet
 from keras.applications.inception_v3 import InceptionV3
+from keras.applications.densenet import DenseNet121
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
@@ -41,6 +42,23 @@ def SpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagene
 
 def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5):
     inception = InceptionV3(
+        input_shape=(224,224,3),
+        pooling='avg',
+        include_top=False,
+        weights=weights,
+    )
+
+    result_model = Sequential()
+    result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))
+    result_model.add(LSTM(n_neurons, return_sequences=True))
+    result_model.add(Flatten())
+    result_model.add(Dropout(dropout))
+    result_model.add(Dense(classes, activation='softmax'))
+
+    return result_model
+
+def DenseNetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5):
+    inception = DenseNet121(
         input_shape=(224,224,3),
         pooling='avg',
         include_top=False,
@@ -128,6 +146,24 @@ def TemporalLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagen
 
     result_model = Sequential()
     result_model.add(TimeDistributed(mobilenet, input_shape=(seq_len, 224,224,depth)))
+    result_model.add(LSTM(n_neurons, return_sequences=True))
+    result_model.add(Flatten())
+    result_model.add(Dropout(dropout))
+    result_model.add(Dense(classes, activation='softmax'))
+
+    return result_model
+
+def TemporalLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5, depth=20):
+    inception = inception_remake(
+        name='temporal',
+        input_shape=(224,224,depth),
+        classes=classes,
+        weight=weights,
+        depth=depth
+    )
+
+    result_model = Sequential()
+    result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,depth)))
     result_model.add(LSTM(n_neurons, return_sequences=True))
     result_model.add(Flatten())
     result_model.add(Dropout(dropout))

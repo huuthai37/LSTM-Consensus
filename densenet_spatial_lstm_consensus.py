@@ -10,6 +10,7 @@ parser.add_argument('-cross', '--cross', help='Cross fold', default=1, type=int)
 parser.add_argument('-s', '--summary', help='Show model', default=0, type=int)
 parser.add_argument('-lr', '--lr', help='Learning rate', default=1e-3, type=float)
 parser.add_argument('-decay', '--decay', help='Decay', default=1e-6, type=float)
+parser.add_argument('-model', '--model', help='Model DenseNet', default=121, type=int)
 args = parser.parse_args()
 print args
 
@@ -36,7 +37,7 @@ classes = args.classes
 epochs = args.epoch
 cross_index = args.cross
 dataset = args.dataset
-pre_file = 'dense169_spatial_lstm_consensus'
+pre_file = 'dense{}_spatial_lstm_consensus'.format(args.model)
 
 seq_len = 3
 n_neurons = 128
@@ -48,7 +49,7 @@ else:
     weights = None
 
 result_model = models.DenseNetSpatialLSTMConsensus(
-                    n_neurons=n_neurons, seq_len=seq_len, classes=classes, weights=weights, dropout=dropout)
+                    n_neurons=n_neurons, seq_len=seq_len, classes=classes, weights=weights, dropout=dropout, id=args.model)
 
 if (args.summary == 1):
     result_model.summary()

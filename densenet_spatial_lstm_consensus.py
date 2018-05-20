@@ -11,6 +11,7 @@ parser.add_argument('-s', '--summary', help='Show model', default=0, type=int)
 parser.add_argument('-lr', '--lr', help='Learning rate', default=1e-3, type=float)
 parser.add_argument('-decay', '--decay', help='Decay', default=1e-6, type=float)
 parser.add_argument('-model', '--model', help='Model DenseNet', default=121, type=int)
+parser.add_argument('-n', '--neural', help='Neural number LSTM', default=128, type=int)
 args = parser.parse_args()
 print args
 
@@ -37,10 +38,10 @@ classes = args.classes
 epochs = args.epoch
 cross_index = args.cross
 dataset = args.dataset
-pre_file = 'dense{}_spatial_lstm_consensus'.format(args.model)
+n_neurons = args.neural
+pre_file = 'dense{}_spatial_lstm{}_consensus'.format(args.model,n_neurons)
 
 seq_len = 3
-n_neurons = 128
 dropout = 0.5
 
 if train & (not retrain):

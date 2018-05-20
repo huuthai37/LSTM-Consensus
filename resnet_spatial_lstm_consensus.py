@@ -47,7 +47,7 @@ if train & (not retrain):
 else:
     weights = None
 
-result_model = models.ResNetSpatialLSTMConsensus(
+result_model = models.ResnetSpatialLSTMConsensus(
                     n_neurons=n_neurons, seq_len=seq_len, classes=classes, weights=weights, dropout=dropout)
 
 if (args.summary == 1):

@@ -14,6 +14,7 @@ from keras.layers import Input, Lambda, Average, average
 from keras.applications.mobilenet import MobileNet
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.densenet import DenseNet169
+from keras.applications.resnet50 import ResNet50
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
@@ -67,6 +68,23 @@ def DenseNetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights=
 
     result_model = Sequential()
     result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))
+    result_model.add(LSTM(n_neurons, return_sequences=True))
+    result_model.add(Flatten())
+    result_model.add(Dropout(dropout))
+    result_model.add(Dense(classes, activation='softmax'))
+
+    return result_model
+
+def ResnetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5):
+    resnet = ResNet50(
+        input_shape=(224,224,3),
+        pooling='avg',
+        include_top=False,
+        weights=weights,
+    )
+
+    result_model = Sequential()
+    result_model.add(TimeDistributed(resnet, input_shape=(seq_len, 224,224,3)))
     result_model.add(LSTM(n_neurons, return_sequences=True))
     result_model.add(Flatten())
     result_model.add(Dropout(dropout))

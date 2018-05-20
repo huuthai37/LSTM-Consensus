@@ -36,7 +36,7 @@ classes = args.classes
 epochs = args.epoch
 cross_index = args.cross
 dataset = args.dataset
-pre_file = 'dense_spatial_lstm_consensus'
+pre_file = 'dense169_spatial_lstm_consensus'
 
 seq_len = 3
 n_neurons = 128

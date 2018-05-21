@@ -52,11 +52,6 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
     if fine:
         for layer in inception.layers:
             layer.trainable = False
-    else:
-        for layer in inception.layers[:249]:
-            layer.trainable = False
-        for layer in inception.layers[249:]:
-            layer.trainable = True
 
     result_model = Sequential()
     result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))

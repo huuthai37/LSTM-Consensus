@@ -75,7 +75,7 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
     result_model.add(Dense(classes, activation='softmax'))
 
     if retrain:
-        model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
+        result_model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
 
     if not fine:
         for layer in result_model.layers:

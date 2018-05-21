@@ -49,13 +49,16 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
         weights=weights,
     )
 
+    for i, layer in enumerate(inception.layers):
+        print(i, layer.name)
+
     if fine:
         for layer in inception.layers:
             layer.trainable = False
     else:
-        for layer in model.layers[:249]:
+        for layer in inception.layers[:249]:
             layer.trainable = False
-        for layer in model.layers[249:]:
+        for layer in inception.layers[249:]:
             layer.trainable = True
 
     result_model = Sequential()

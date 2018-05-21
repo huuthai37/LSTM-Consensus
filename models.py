@@ -134,6 +134,11 @@ def ResnetSpatialLSTMConsensus(n_neurons=256, seq_len=3, classes=101, weights='i
         weights=weights,
     )
 
+    for layer in resnet.layers[:175]:
+        layer.trainable = False
+    for layer in resnet.layers[175:]:
+        layer.trainable = True
+
     result_model = Sequential()
     result_model.add(TimeDistributed(resnet, input_shape=(seq_len, 224,224,3)))
     result_model.add(LSTM(n_neurons, return_sequences=True))
@@ -145,7 +150,7 @@ def ResnetSpatialLSTMConsensus(n_neurons=256, seq_len=3, classes=101, weights='i
         result_model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
 
     if not fine:
-        for layer in inception.layers:
+        for layer in resnet.layers:
             layer.trainable = True
         result_model.summary()
 

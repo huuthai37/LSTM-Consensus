@@ -49,6 +49,10 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
         weights=weights,
     )
     if fine:
+        for layer in inception.layers[:173]:
+            layer.trainable = False
+        for layer in inception.layers[173:]:
+            layer.trainable = True
         count = 0
         for i, layer in enumerate(inception.layers):
             a = layer.name.split('_')[0]

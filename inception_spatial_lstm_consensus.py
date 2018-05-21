@@ -55,7 +55,7 @@ else:
     fine = False
 
 result_model = models.InceptionSpatialLSTMConsensus(
-                    n_neurons=n_neurons, seq_len=seq_len, classes=classes, weights=weights, dropout=dropout, fine=fine)
+                    n_neurons=n_neurons, seq_len=seq_len, classes=classes, weights=weights, dropout=dropout, fine=True)
 
 
 if (args.summary == 1):
@@ -73,7 +73,7 @@ result_model.compile(loss='categorical_crossentropy',
 if train:
     models.train_process(result_model, pre_file, data_type=[0], epochs=epochs, dataset=dataset,
         retrain=retrain,  classes=classes, cross_index=cross_index, 
-        seq_len=seq_len, old_epochs=old_epochs, batch_size=batch_size)
+        seq_len=seq_len, old_epochs=old_epochs, batch_size=batch_size,fine=fine)
 
 else:
     models.test_process(result_model, pre_file, data_type=[0], epochs=epochs, dataset=dataset,

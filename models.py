@@ -78,29 +78,36 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
 
 def DenseNetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5, id=121):
     if id == 169:
-        inception = DenseNet169(
+        densenet = DenseNet169(
             input_shape=(224,224,3),
             pooling='avg',
             include_top=False,
             weights=weights,
         )
     elif id == 201:
-        inception = DenseNet201(
+        densenet = DenseNet201(
             input_shape=(224,224,3),
             pooling='avg',
             include_top=False,
             weights=weights,
         )
     else:
-        inception = DenseNet121(
+        densenet = DenseNet121(
             input_shape=(224,224,3),
             pooling='avg',
             include_top=False,
             weights=weights,
         )
+    count = 0
+    for i, layer in enumerate(densenet.layers):
+        a = layer.name.split('_')
+        if ('batch' in a) | ('bn' in a) :
+            layer.trainable = True
+            count += 1
+    print 'Have ' + str(count) + ' BN layers'
 
     result_model = Sequential()
-    result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))
+    result_model.add(TimeDistributed(densenet, input_shape=(seq_len, 224,224,3)))
     result_model.add(LSTM(n_neurons, return_sequences=True))
     result_model.add(Flatten())
     result_model.add(Dropout(dropout))
@@ -264,6 +271,11 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101',
 
     if retrain:
         model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
+
+    if not fine:
+        for layer in model.layers:
+            layer.trainable = True
+        model.summary()
 
     with open(out_file,'rb') as f1:
         keys = pickle.load(f1)

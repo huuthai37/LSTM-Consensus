@@ -87,11 +87,12 @@ if train:
         old_epochs = 3
     
     # Retrain without preeze some layers
-    for layer in inception.layers[:172]:
-        layer.trainable = False
-    for layer in inception.layers[172:]:
-        layer.trainable = True
-    inception.get_layer('batch_normalization_1').trainable = True
+    if fine:
+        for layer in inception.layers[:172]:
+            layer.trainable = False
+        for layer in inception.layers[172:]:
+            layer.trainable = True
+        inception.get_layer('batch_normalization_1').trainable = True
     result_model.summary()
     result_model.compile(loss='categorical_crossentropy',
                      optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=True),

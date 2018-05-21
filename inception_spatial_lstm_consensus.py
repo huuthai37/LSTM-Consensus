@@ -87,9 +87,9 @@ if train:
         old_epochs = 3
     
     # Retrain without preeze some layers
-    for layer in inception.layers[:172]:
+    for layer in result_model.layers[:172]:
         layer.trainable = False
-    for layer in inception.layers[172:]:
+    for layer in result_model.layers[172:]:
         layer.trainable = True
     inception.get_layer('batch_normalization_1').trainable = True
     result_model.summary()

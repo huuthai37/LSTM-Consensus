@@ -55,6 +55,8 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
             if a == 'batch':
                 if count != 0:
                     layer.trainable = False
+                else: 
+                    layer.trainable = True
                 count += 1
 
     result_model = Sequential()

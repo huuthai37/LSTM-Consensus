@@ -74,6 +74,8 @@ if train:
         old_epochs = 3
     
     # Retrain without preeze some layers
+    for i, layer in enumerate(result_model.layers):
+        print(i, layer.name)
     for layer in result_model.layers[:172]:
         layer.trainable = False
     for layer in result_model.layers[172:]:

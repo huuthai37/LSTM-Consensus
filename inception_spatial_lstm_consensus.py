@@ -87,12 +87,17 @@ if train:
         old_epochs = 3
     
     # Retrain without preeze some layers
-    if fine:
-        for layer in inception.layers[:172]:
-            layer.trainable = False
-        for layer in inception.layers[172:]:
-            layer.trainable = True
-        inception.get_layer('batch_normalization_1').trainable = True
+    
+    for layer in inception.layers[:172]:
+        layer.trainable = False
+    for layer in inception.layers[172:]:
+        layer.trainable = True
+    inception.get_layer('batch_normalization_1').trainable = True
+    if retrain:
+        model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
+        if not fine:
+            for layer in inception.layers:
+                layer.trainable = True
     result_model.summary()
     result_model.compile(loss='categorical_crossentropy',
                      optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=True),

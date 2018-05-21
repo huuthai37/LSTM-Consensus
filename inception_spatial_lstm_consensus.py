@@ -65,7 +65,8 @@ if (args.summary == 1):
 lr = args.lr 
 decay = args.decay
 
-result_model.compile(loss='categorical_crossentropy',
+if fine:
+    result_model.compile(loss='categorical_crossentropy',
                      optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=True),
                      metrics=['accuracy'])
     

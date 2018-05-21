@@ -17,6 +17,7 @@ from keras.applications.densenet import DenseNet169, DenseNet121, DenseNet201
 from keras.applications.resnet50 import ResNet50
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
+from keras import optimizers
 
 server = config.server()
 data_output_path = config.data_output_path()
@@ -122,6 +123,14 @@ def ResnetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='i
         include_top=False,
         weights=weights,
     )
+
+    count = 0
+    for i, layer in enumerate(resnet.layers):
+        a = layer.name.split('_')
+        if ('batch' in a) | ('bn' in a) :
+            layer.trainable = True
+            count += 1
+    print 'Have ' + str(count) + ' BN layers'
 
     result_model = Sequential()
     result_model.add(TimeDistributed(resnet, input_shape=(seq_len, 224,224,3)))
@@ -275,6 +284,9 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101',
     if not fine:
         for layer in model.layers:
             layer.trainable = True
+        model.compile(loss='categorical_crossentropy',
+                     optimizer=optimizers.SGD(lr=1e-4, decay=0.0, momentum=0.9, nesterov=True),
+                     metrics=['accuracy'])
         model.summary()
 
     with open(out_file,'rb') as f1:

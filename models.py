@@ -81,7 +81,7 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
     if not fine:
         for layer in result_model.layers:
             layer.trainable = True
-        model.summary()
+        result_model.summary()
 
     return result_model
 

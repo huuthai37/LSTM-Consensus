@@ -42,7 +42,8 @@ def SpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagene
 
     return result_model
 
-def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5, fine=True, retrain=False):
+def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', 
+    dropout=0.5, fine=True, retrain=False, pre_file='',old_epochs=0,cross_index=1):
     inception = InceptionV3(
         input_shape=(224,224,3),
         pooling='avg',

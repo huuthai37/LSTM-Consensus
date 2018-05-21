@@ -56,7 +56,8 @@ else:
 
 result_model = models.InceptionSpatialLSTMConsensus(
                     n_neurons=n_neurons, seq_len=seq_len, classes=classes, 
-                    weights=weights, dropout=dropout, fine=True, retrain=retrain)
+                    weights=weights, dropout=dropout, fine=True, retrain=retrain,
+                    pre_file=pre_file,old_epochs=old_epochs,cross_index=cross_index)
 
 
 if (args.summary == 1):

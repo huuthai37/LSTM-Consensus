@@ -42,7 +42,7 @@ def SpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagene
 
     return result_model
 
-def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5, fine=True):
+def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5, fine=True, retrain=False):
     inception = InceptionV3(
         input_shape=(224,224,3),
         pooling='avg',
@@ -51,22 +51,21 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
     )
     # for i, layer in enumerate(inception.layers):
     #     print(i, layer.name)
-    if fine:
-        for layer in inception.layers[:173]:
-            layer.trainable = False
-        for layer in inception.layers[173:]:
+    for layer in inception.layers[:173]:
+        layer.trainable = False
+    for layer in inception.layers[173:]:
+        layer.trainable = True
+    count = 0
+    for i, layer in enumerate(inception.layers):
+        if layer.name == 'conv2d_1':
             layer.trainable = True
-        count = 0
-        for i, layer in enumerate(inception.layers):
-            if layer.name == 'conv2d_1':
-                layer.trainable = True
-                print 'Unpreeze ' + layer.name
-                continue
-            a = layer.name.split('_')[0]
-            if a == 'batch':
-                layer.trainable = True
-                count += 1
-        print 'Have ' + str(count) + ' BN layers'
+            print 'Unpreeze ' + layer.name
+            continue
+        a = layer.name.split('_')[0]
+        if a == 'batch':
+            layer.trainable = True
+            count += 1
+    print 'Have ' + str(count) + ' BN layers'
 
     result_model = Sequential()
     result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))
@@ -74,6 +73,14 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
     result_model.add(Flatten())
     result_model.add(Dropout(dropout))
     result_model.add(Dense(classes, activation='softmax'))
+
+    if retrain:
+        model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
+
+    if not fine:
+        for layer in result_model.layers:
+            layer.trainable = True
+        model.summary()
 
     return result_model
 
@@ -277,17 +284,6 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101',
 
     out_file = r'{}database/{}-train{}-split{}.pickle'.format(data_output_path,dataset,seq_len,cross_index)
     valid_file = r'{}database/{}-test{}-split{}.pickle'.format(data_output_path,dataset,seq_len,cross_index)
-
-    if retrain:
-        model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
-
-    if not fine:
-        for layer in model.layers:
-            layer.trainable = True
-        model.compile(loss='categorical_crossentropy',
-                     optimizer=optimizers.SGD(lr=1e-4, decay=0.0, momentum=0.9, nesterov=True),
-                     metrics=['accuracy'])
-        model.summary()
 
     with open(out_file,'rb') as f1:
         keys = pickle.load(f1)

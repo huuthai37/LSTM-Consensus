@@ -55,7 +55,8 @@ else:
     fine = False
 
 result_model = models.InceptionSpatialLSTMConsensus(
-                    n_neurons=n_neurons, seq_len=seq_len, classes=classes, weights=weights, dropout=dropout, fine=True)
+                    n_neurons=n_neurons, seq_len=seq_len, classes=classes, 
+                    weights=weights, dropout=dropout, fine=True, retrain=retrain)
 
 
 if (args.summary == 1):
@@ -65,8 +66,7 @@ if (args.summary == 1):
 lr = args.lr 
 decay = args.decay
 
-if fine:
-    result_model.compile(loss='categorical_crossentropy',
+result_model.compile(loss='categorical_crossentropy',
                      optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=True),
                      metrics=['accuracy'])
     

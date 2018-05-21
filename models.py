@@ -48,8 +48,8 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
         include_top=False,
         weights=weights,
     )
-    for i, layer in enumerate(inception.layers):
-        print(i, layer.name)
+    # for i, layer in enumerate(inception.layers):
+    #     print(i, layer.name)
     if fine:
         for layer in inception.layers[:173]:
             layer.trainable = False
@@ -60,13 +60,10 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
             if layer.name == 'conv2d_1':
                 layer.trainable = True
                 print 'Unpreeze ' + layer.name
+                continue
             a = layer.name.split('_')[0]
             if a == 'batch':
-                if count != 0:
-                    layer.trainable = False
-                else: 
-                    layer.trainable = True
-                    print 'Unpreeze ' + layer.name
+                layer.trainable = True
                 count += 1
         print 'Have ' + str(count) + ' BN layers'
 

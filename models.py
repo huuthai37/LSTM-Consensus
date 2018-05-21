@@ -49,8 +49,8 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
         weights=weights,
     )
 
-    for i, layer in enumerate(inception.layers):
-        print(i, layer.name)
+    # for i, layer in enumerate(inception.layers):
+    #     print(i, layer.name)
 
     if fine:
         for layer in inception.layers:

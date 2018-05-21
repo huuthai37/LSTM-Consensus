@@ -134,10 +134,10 @@ def ResnetSpatialLSTMConsensus(n_neurons=256, seq_len=3, classes=101, weights='i
         weights=weights,
     )
 
-    for layer in resnet.layers[:175]:
-        layer.trainable = False
-    for layer in resnet.layers[175:]:
-        layer.trainable = True
+    # for layer in resnet.layers[:175]:
+    #     layer.trainable = False
+    # for layer in resnet.layers[175:]:
+    #     layer.trainable = True
 
     result_model = Sequential()
     result_model.add(TimeDistributed(resnet, input_shape=(seq_len, 224,224,3)))

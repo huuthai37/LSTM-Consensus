@@ -48,10 +48,14 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
         include_top=False,
         weights=weights,
     )
-
     if fine:
-        for layer in inception.layers:
-            layer.trainable = False
+        count = 0
+        for i, layer in enumerate(inception.layers):
+            a = layer.name.split('_')[0]
+            if a == 'batch':
+                if count != 0:
+                    layer.trainable = False
+                count += 1
 
     result_model = Sequential()
     result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))

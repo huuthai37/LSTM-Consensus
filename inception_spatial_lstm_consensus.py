@@ -53,7 +53,7 @@ else:
     fine = False
 
 result_model = models.InceptionSpatialLSTMConsensus(
-                    n_neurons=n_neurons, seq_len=seq_len, classes=classes, weights=weights, dropout=dropout, fine=True)
+                    n_neurons=n_neurons, seq_len=seq_len, classes=classes, weights=weights, dropout=dropout, fine=fine)
 
 
 if (args.summary == 1):
@@ -63,24 +63,12 @@ if (args.summary == 1):
 lr = args.lr 
 decay = args.decay
 
-result_model.compile(optimizer='rmsprop', loss='categorical_crossentropy',metrics=['accuracy'])
+result_model.compile(loss='categorical_crossentropy',
+                     optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=True),
+                     metrics=['accuracy'])
     
 
 if train:
-    models.train_process(result_model, pre_file, data_type=[0], epochs=3, dataset=dataset,
-        retrain=retrain,  classes=classes, cross_index=cross_index, 
-        seq_len=seq_len, old_epochs=old_epochs, batch_size=batch_size, fine=True)
-
-    print 'Start fine-tuning'
-    for layer in result_model.layers[:172]:
-        layer.trainable = False
-    for layer in result_model.layers[172:]:
-        layer.trainable = True
-
-    result_model.compile(loss='categorical_crossentropy',
-                     optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=True),
-                     metrics=['accuracy'])
-
     models.train_process(result_model, pre_file, data_type=[0], epochs=epochs, dataset=dataset,
         retrain=retrain,  classes=classes, cross_index=cross_index, 
         seq_len=seq_len, old_epochs=old_epochs, batch_size=batch_size, fine=False)

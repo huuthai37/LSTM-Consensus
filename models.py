@@ -41,13 +41,22 @@ def SpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagene
 
     return result_model
 
-def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5):
+def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5, fine=True):
     inception = InceptionV3(
         input_shape=(224,224,3),
         pooling='avg',
         include_top=False,
         weights=weights,
     )
+
+    if fine:
+        for layer in inception.layers:
+            layer.trainable = False
+    else:
+        for layer in model.layers[:249]:
+            layer.trainable = False
+        for layer in model.layers[249:]:
+            layer.trainable = True
 
     result_model = Sequential()
     result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))

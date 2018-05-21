@@ -5,6 +5,7 @@ parser.add_argument('-data', '--dataset', help='Dataset', default='ucf101')
 parser.add_argument('-b', '--batch', help='Batch size', default=16, type=int)
 parser.add_argument('-c', '--classes', help='Number of classes', default=101, type=int)
 parser.add_argument('-e', '--epoch', help='Number of epochs', default=5, type=int)
+parser.add_argument('-dropout', '--dropout', help='Dropout', default=0.8, type=float)
 parser.add_argument('-r', '--retrain', help='Number of old epochs when retrain', default=0, type=int)
 parser.add_argument('-cross', '--cross', help='Cross fold', default=1, type=int)
 parser.add_argument('-s', '--summary', help='Show model', default=0, type=int)
@@ -41,7 +42,7 @@ pre_file = 'incept_spatial_lstm_consensus'
 
 seq_len = 3
 n_neurons = 256
-dropout = 0.5
+dropout = args.dropout
 
 if train & (not retrain):
     weights = 'imagenet'

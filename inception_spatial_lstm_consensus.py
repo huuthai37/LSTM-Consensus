@@ -62,9 +62,8 @@ if (args.summary == 1):
 
 lr = args.lr 
 decay = args.decay
-if fine:
-    result_model.compile(optimizer='rmsprop', loss='categorical_crossentropy',metrics=['accuracy'])
-else:
+
+result_model.compile(optimizer='rmsprop', loss='categorical_crossentropy',metrics=['accuracy'])
     
 
 if train:

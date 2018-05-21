@@ -9,7 +9,7 @@ parser.add_argument('-r', '--retrain', help='Number of old epochs when retrain',
 parser.add_argument('-cross', '--cross', help='Cross fold', default=1, type=int)
 parser.add_argument('-s', '--summary', help='Show model', default=0, type=int)
 parser.add_argument('-lr', '--lr', help='Learning rate', default=1e-3, type=float)
-parser.add_argument('-decay', '--decay', help='Decay', default=0.0, type=float)
+parser.add_argument('-decay', '--decay', help='Decay', default=1e-6, type=float)
 parser.add_argument('-fine', '--fine', help='Fine-tuning', default=1, type=int)
 args = parser.parse_args()
 print args
@@ -18,10 +18,6 @@ import sys
 import config
 import models
 from keras import optimizers
-from keras.applications.inception_v3 import InceptionV3
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, ZeroPadding2D
-from keras.layers import TimeDistributed, Activation, AveragePooling1D, LSTM
 
 process = args.process
 if process == 'train':
@@ -55,20 +51,10 @@ if args.fine == 1:
     fine = True
 else:
     fine = False
-inception = InceptionV3(
-    input_shape=(224,224,3),
-    pooling='avg',
-    include_top=False,
-    weights=weights,
-)
-result_model = Sequential()
-result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))
-result_model.add(BatchNormalization())
-result_model.add(LSTM(n_neurons, return_sequences=True))
-result_model.add(Flatten())
-result_model.add(BatchNormalization())
-result_model.add(Dropout(dropout))
-result_model.add(Dense(classes, activation='softmax'))
+
+result_model = models.InceptionSpatialLSTMConsensus(
+                    n_neurons=n_neurons, seq_len=seq_len, classes=classes, weights=weights, dropout=dropout, fine=fine)
+
 
 if (args.summary == 1):
     result_model.summary()
@@ -76,9 +62,12 @@ if (args.summary == 1):
 
 lr = args.lr 
 decay = args.decay
+
 result_model.compile(loss='categorical_crossentropy',
                      optimizer=optimizers.SGD(lr=lr, decay=decay, momentum=0.9, nesterov=True),
                      metrics=['accuracy'])
+    
+
 if train:
     models.train_process(result_model, pre_file, data_type=[0], epochs=epochs, dataset=dataset,
         retrain=retrain,  classes=classes, cross_index=cross_index, 

@@ -58,9 +58,6 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
                 else: 
                     layer.trainable = True
                 count += 1
-    else:
-        for layer in inception.layers:
-            layer.trainable = False
 
     result_model = Sequential()
     result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))
@@ -257,7 +254,7 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101',
     out_file = r'{}database/{}-train{}-split{}.pickle'.format(data_output_path,dataset,seq_len,cross_index)
     valid_file = r'{}database/{}-test{}-split{}.pickle'.format(data_output_path,dataset,seq_len,cross_index)
 
-    if retrain & fine:
+    if retrain:
         model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
 
     with open(out_file,'rb') as f1:

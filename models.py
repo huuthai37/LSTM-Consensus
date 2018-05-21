@@ -125,7 +125,8 @@ def DenseNetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights=
 
     return result_model
 
-def ResnetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', dropout=0.5):
+def ResnetSpatialLSTMConsensus(n_neurons=256, seq_len=3, classes=101, weights='imagenet', 
+    dropout=0.8, fine=True, retrain=False, pre_file='',old_epochs=0,cross_index=1):
     resnet = ResNet50(
         input_shape=(224,224,3),
         pooling='avg',
@@ -133,20 +134,20 @@ def ResnetSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='i
         weights=weights,
     )
 
-    count = 0
-    for i, layer in enumerate(resnet.layers):
-        a = layer.name.split('_')
-        if ('batch' in a) | ('bn' in a) :
-            layer.trainable = True
-            count += 1
-    print 'Have ' + str(count) + ' BN layers'
-
     result_model = Sequential()
     result_model.add(TimeDistributed(resnet, input_shape=(seq_len, 224,224,3)))
     result_model.add(LSTM(n_neurons, return_sequences=True))
     result_model.add(Flatten())
     result_model.add(Dropout(dropout))
     result_model.add(Dense(classes, activation='softmax'))
+
+    if retrain:
+        result_model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
+
+    if not fine:
+        for layer in inception.layers:
+            layer.trainable = True
+        result_model.summary()
 
     return result_model
 

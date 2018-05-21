@@ -12,6 +12,7 @@ parser.add_argument('-s', '--summary', help='Show model', default=0, type=int)
 parser.add_argument('-lr', '--lr', help='Learning rate', default=1e-3, type=float)
 parser.add_argument('-decay', '--decay', help='Decay', default=1e-6, type=float)
 parser.add_argument('-fine', '--fine', help='Fine-tuning', default=1, type=int)
+parser.add_argument('-n', '--neural', help='LSTM neural', default=256, type=int)
 args = parser.parse_args()
 print args
 
@@ -38,11 +39,11 @@ classes = args.classes
 epochs = args.epoch
 cross_index = args.cross
 dataset = args.dataset
-pre_file = 'incept_spatial_lstm_consensus'
 
 seq_len = 3
-n_neurons = 256
+n_neurons = args.neural
 dropout = args.dropout
+pre_file = 'incept_spatial_lstm{}_consensus'.format(n_neurons)
 
 if train & (not retrain):
     weights = 'imagenet'

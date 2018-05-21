@@ -45,7 +45,7 @@ def getTrainData(keys,batch_size,dataset,classes,train,data_type,split_sequence=
                     train=train)
 
             Y_train = np_utils.to_categorical(Y_train,classes)
-            if train != 'train':
+            if (train != 'train') & (i != 0) & ((i/batch_size) % 50 == 0):
                 print 'Test batch {}'.format(i/batch_size+1)
             yield X_train, np.array(Y_train)
 

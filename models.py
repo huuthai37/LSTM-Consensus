@@ -57,7 +57,9 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
                     layer.trainable = False
                 else: 
                     layer.trainable = True
+                    print 'Unpreeze' + str(count)
                 count += 1
+        print 'Have ' + str(count) + ' BN layers'
 
     result_model = Sequential()
     result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))

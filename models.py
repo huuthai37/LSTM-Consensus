@@ -257,7 +257,7 @@ def train_process(model, pre_file, data_type, epochs=20, dataset='ucf101',
     out_file = r'{}database/{}-train{}-split{}.pickle'.format(data_output_path,dataset,seq_len,cross_index)
     valid_file = r'{}database/{}-test{}-split{}.pickle'.format(data_output_path,dataset,seq_len,cross_index)
 
-    if retrain:
+    if retrain & fine:
         model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
 
     with open(out_file,'rb') as f1:

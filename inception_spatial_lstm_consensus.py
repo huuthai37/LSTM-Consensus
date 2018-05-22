@@ -43,7 +43,7 @@ dataset = args.dataset
 seq_len = 3
 n_neurons = args.neural
 dropout = args.dropout
-pre_file = 'incept_spatial_lstm{}_avg'.format(n_neurons)
+pre_file = 'incept229_spatial_lstm{}'.format(n_neurons)
 
 if train & (not retrain):
     weights = 'imagenet'

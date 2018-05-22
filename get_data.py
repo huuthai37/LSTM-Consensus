@@ -86,8 +86,8 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
 
         height, width, channel = rgb.shape
         if height == size:
-            if size != 224:
-                rgb = cv2.resize(rgb, (224, 224))
+            # if size != 224:
+            rgb = cv2.resize(rgb, (299, 299))   
             # print size
             rgb = rgb.astype('float16',copy=False)
             rgb/=255

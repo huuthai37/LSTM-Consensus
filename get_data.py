@@ -103,7 +103,7 @@ def stack_seq_rgb(path_video,render_rgb,pre_random,dataset,train):
     return np.array(return_stack)
 
 def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,train):
-    data_folder_opt = r'{}{}-seq-opt/'.format(data_output_path,dataset)
+    data_folder_opt = r'{}{}-seq-opt{}/'.format(data_output_path,dataset,data_type)
     name_video = path_video.split('/')[1]
     u = data_folder_opt + 'u/' + name_video + '/'
     v = data_folder_opt + 'v/' + name_video + '/'
@@ -144,9 +144,8 @@ def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,tr
             nstack = image_crop(nstack, x, y, size)
 
         height, width, channel = nstack.shape
-        if height == size:
-            if size != 224:
-                nstack = cv2.resize(nstack, (224, 224))
+        if (height == size) && (width == size):
+            nstack = cv2.resize(nstack, (299, 299))
             # print size
             nstack = nstack.astype('float16',copy=False)
             nstack/=255

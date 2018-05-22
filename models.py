@@ -15,6 +15,7 @@ from keras.applications.mobilenet import MobileNet
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.densenet import DenseNet169, DenseNet121, DenseNet201
 from keras.applications.resnet50 import ResNet50
+from inceptionv3 import TempInceptionV3
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from keras import optimizers
@@ -79,10 +80,32 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
     if retrain:
         result_model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
 
-    if not fine:
-        for layer in inception.layers:
-            layer.trainable = True
-        result_model.summary()
+    # if not fine:
+    #     for layer in inception.layers:
+    #         layer.trainable = True
+    #     result_model.summary()
+
+    return result_model
+
+def InceptionTemporalLSTMConsensus(n_neurons=256, seq_len=3, classes=101, weights='imagenet', 
+    dropout=0.8, fine=True, retrain=False, pre_file='',old_epochs=0,cross_index=1):
+    inception = TempInceptionV3(
+        input_shape=(299,299,20),
+        pooling='avg',
+        include_top=False,
+        weights='imagenet',
+        depth=20
+    )
+
+    result_model = Sequential()
+    result_model.add(TimeDistributed(inception, input_shape=(seq_len, 299,299,20)))
+    result_model.add(LSTM(n_neurons, return_sequences=True))
+    result_model.add(Flatten())
+    result_model.add(Dropout(dropout))
+    result_model.add(Dense(classes, activation='softmax'))
+
+    if retrain:
+        result_model.load_weights('weights/{}_{}e_cr{}.h5'.format(pre_file,old_epochs,cross_index))
 
     return result_model
 

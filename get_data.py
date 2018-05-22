@@ -144,7 +144,7 @@ def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,tr
             nstack = image_crop(nstack, x, y, size)
 
         height, width, channel = nstack.shape
-        if (height == size) && (width == size):
+        if (height == size) & (width == size):
             nstack = cv2.resize(nstack, (299, 299))
             # print size
             nstack = nstack.astype('float16',copy=False)

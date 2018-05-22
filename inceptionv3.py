@@ -291,5 +291,6 @@ def TempInceptionV3(include_top=True,
     # load weights
     if weights == 'imagenet':
         model.load_weights('data/inceptionv3_temporal.h5')
+        print 'Loaded weights'
 
     return model

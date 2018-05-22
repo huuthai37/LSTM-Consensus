@@ -45,7 +45,7 @@ def SpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagene
 def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights='imagenet', 
     dropout=0.5, fine=True, retrain=False, pre_file='',old_epochs=0,cross_index=1):
     inception = InceptionV3(
-        input_shape=(224,224,3),
+        input_shape=(299,299,3),
         pooling='avg',
         include_top=False,
         weights=weights,
@@ -69,7 +69,7 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
     # print 'Have ' + str(count) + ' BN layers'
 
     result_model = Sequential()
-    result_model.add(TimeDistributed(inception, input_shape=(seq_len, 224,224,3)))
+    result_model.add(TimeDistributed(inception, input_shape=(seq_len, 299,299,3)))
     result_model.add(LSTM(n_neurons, return_sequences=True))
     # result_model.add(AveragePooling1D(pool_size=seq_len))
     result_model.add(Flatten())

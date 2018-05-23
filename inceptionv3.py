@@ -38,7 +38,7 @@ def output_of_lambda(input_shape):
 
 def regulization(x):
     # x= tf.image.resize_images(x, (299,299))
-    x = tf.cast(x, tf.float32)
+#     x = tf.cast(x, tf.float32)
     x /= 255.0
     x -= 0.5
     x *= 2.0

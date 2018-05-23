@@ -309,7 +309,7 @@ def stack_single_sequence_split(chunk,data_type,dataset,train):
 
     return [np.array(stack_return1), np.array(stack_return2), np.array(stack_return3)], labels
 
-def stack_multi_sequence(chunk,multi_data_type,dataset):
+def stack_multi_sequence(chunk,multi_data_type,dataset,train):
     size = random_size()
     mode_crop = random.randint(0, 1)
     flip = random.randint(0, 1)

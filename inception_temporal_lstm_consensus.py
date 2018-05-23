@@ -2,7 +2,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-p', '--process', help='Process', default='train')
 parser.add_argument('-data', '--dataset', help='Dataset', default='ucf101')
-parser.add_argument('-b', '--batch', help='Batch size', default=20, type=int)
+parser.add_argument('-b', '--batch', help='Batch size', default=16, type=int)
 parser.add_argument('-c', '--classes', help='Number of classes', default=101, type=int)
 parser.add_argument('-e', '--epoch', help='Number of epochs', default=5, type=int)
 parser.add_argument('-dropout', '--dropout', help='Dropout', default=0.8, type=float)

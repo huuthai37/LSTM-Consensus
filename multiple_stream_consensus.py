@@ -79,12 +79,12 @@ result_model.compile(loss='categorical_crossentropy',
     
 
 if train:
-    models.train_process(result_model, pre_file, data_type=[temp_rate], epochs=epochs, dataset=dataset,
+    models.train_process(result_model, pre_file, data_type=[0, temp_rate], epochs=epochs, dataset=dataset,
         retrain=retrain,  classes=classes, cross_index=cross_index, 
         seq_len=seq_len, old_epochs=old_epochs, batch_size=batch_size,fine=fine)
 
 else:
-    models.test_process(result_model, pre_file, data_type=[temp_rate], epochs=epochs, dataset=dataset,
+    models.test_process(result_model, pre_file, data_type=[0, temp_rate], epochs=epochs, dataset=dataset,
         classes=classes, cross_index=cross_index,
         seq_len=seq_len, batch_size=batch_size)
     

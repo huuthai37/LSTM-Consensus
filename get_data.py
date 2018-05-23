@@ -310,33 +310,40 @@ def stack_single_sequence_split(chunk,data_type,dataset,train):
     return [np.array(stack_return1), np.array(stack_return2), np.array(stack_return3)], labels
 
 def stack_multi_sequence(chunk,multi_data_type,dataset):
+    size = random_size()
+    mode_crop = random.randint(0, 1)
+    flip = random.randint(0, 1)
+    mode_corner_crop = random.randint(0, 4)
+
+    if train != 'train':
+        size = 224
+    if dataset == 'ucf101':
+        x = random.randint(0, 340-size)
+        y = random.randint(0, 256-size)
+        if train != 'train':
+            x = (340-size)/2
+            y = (256-size)/2
+    else:
+        x = -1
+        y = -1
+
+    pre_random = [size, mode_crop, flip, mode_corner_crop, x, y]
+
     labels = []
-    returns = []
-    stack_return = []
+    stack_return_rgb = []
+    for rgb in chunk:
+        labels.append(rgb[2])
+        stack_return_rgb.append(stack_seq_rgb(rgb[0],rgb[1],pre_random,dataset,train))
+    
+    stack_return_opt = []
+    for opt in chunk:
+        stack_return_opt.append(stack_seq_optical_flow(opt[0],opt[1],multi_data_type[1],pre_random,dataset,train))
 
-    for data_type in multi_data_type:
-        stack_return.append([])
-
-    for sample in chunk:
-        labels.append(sample[2])
-
-        s = 0
-        for data_type in multi_data_type:
-            if data_type == 0:
-                stack_return[s].append(stack_seq_rgb(sample[0],sample[1],dataset))
-            else:
-                stack_return[s].append(stack_seq_optical_flow(sample[0],sample[1],data_type,dataset))
-            s+=1
-
-    if len(stack_return[0]) < len(chunk):
+    if len(stack_return_rgb) < len(chunk):
         print 'Stacked data error'
         sys.exit()
 
-    for i in range(len(multi_data_type)):
-        returns.append(np.array(stack_return[i]))
-
-    return returns, labels
-
+    return [np.array(stack_return_rgb), np.array(stack_return_opt)], labels
 
 def getClassData(keys,cut=0):
     labels = []

@@ -24,12 +24,25 @@ from keras.layers import MaxPooling2D
 from keras.layers import AveragePooling2D
 from keras.layers import GlobalAveragePooling2D
 from keras.layers import GlobalMaxPooling2D
+from keras.layers import Lambda
 from keras.engine import get_source_inputs
 from keras.utils.data_utils import get_file
 from keras import backend as K
 from keras.applications import imagenet_utils
 from keras.applications.imagenet_utils import decode_predictions
 from keras.applications.imagenet_utils import _obtain_input_shape
+import tensorflow as tf
+
+def output_of_lambda(input_shape):
+    return (input_shape[0], 229,299,20)
+
+def regulization(x):
+    # x= tf.image.resize_images(x, (299,299))
+    x = tf.cast(x, tf.float32)
+    x /= 255.0
+    # x -= tf.reduce_mean(x, len(x.get_shape()) - 1, True)
+    # print tf.reduce_mean(x, len(x.get_shape()) - 1).get_shape()
+    return x
 
 def conv2d_bn(x,
               filters,
@@ -86,7 +99,7 @@ def TempInceptionV3(include_top=True,
 
     # Determine proper input shape
     if input_shape is None:
-        input_shape = (229,229,depth)
+        input_shape = (None,None,depth)
 
     if input_tensor is None:
         img_input = Input(shape=input_shape)
@@ -101,7 +114,8 @@ def TempInceptionV3(include_top=True,
     else:
         channel_axis = 3
 
-    x = conv2d_bn(img_input, 32, 3, 3, strides=(2, 2), padding='valid')
+    x = Lambda(regulization, output_shape=output_of_lambda)(img_input)
+    x = conv2d_bn(x, 32, 3, 3, strides=(2, 2), padding='valid')
     x = conv2d_bn(x, 32, 3, 3, padding='valid')
     x = conv2d_bn(x, 64, 3, 3)
     x = MaxPooling2D((3, 3), strides=(2, 2))(x)

@@ -90,7 +90,7 @@ def InceptionSpatialLSTMConsensus(n_neurons=128, seq_len=3, classes=101, weights
 def InceptionTemporalLSTMConsensus(n_neurons=256, seq_len=3, classes=101, weights='imagenet', 
     dropout=0.8, fine=True, retrain=False, pre_file='',old_epochs=0,cross_index=1):
     inception = TempInceptionV3(
-        input_shape=(299,299,20),
+        input_shape=(None,None,20),
         pooling='avg',
         include_top=False,
         weights=weights,

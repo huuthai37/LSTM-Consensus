@@ -40,6 +40,8 @@ def regulization(x):
     # x= tf.image.resize_images(x, (299,299))
     x = tf.cast(x, tf.float32)
     x /= 255.0
+    x -= 0.5
+    x *= 2.0
     # x -= tf.reduce_mean(x, len(x.get_shape()) - 1, True)
     # print tf.reduce_mean(x, len(x.get_shape()) - 1).get_shape()
     return x

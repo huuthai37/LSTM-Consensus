@@ -33,6 +33,7 @@ elif process == 'retrain':
 else:
     train = False
     retrain = False
+    old_epochs = 0
 
 batch_size = args.batch
 classes = args.classes

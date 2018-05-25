@@ -116,8 +116,8 @@ def TempInceptionV3(include_top=True,
     else:
         channel_axis = 3
 
-    # x = Lambda(regulization, output_shape=output_of_lambda)(img_input)
-    x = conv2d_bn(img_input, 32, 3, 3, strides=(2, 2), padding='valid')
+    x = Lambda(regulization, output_shape=output_of_lambda)(img_input)
+    x = conv2d_bn(x, 32, 3, 3, strides=(2, 2), padding='valid')
     x = conv2d_bn(x, 32, 3, 3, padding='valid')
     x = conv2d_bn(x, 64, 3, 3)
     x = MaxPooling2D((3, 3), strides=(2, 2))(x)

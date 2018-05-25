@@ -122,12 +122,11 @@ def InceptionMultiLSTMConsensus(n_neurons=256, seq_len=3, classes=101, weights='
                     weights=weight, dropout=dropout, fine=fine, retrain=False,
                     pre_file=pre_file,old_epochs=old_epochs,cross_index=cross_index)
 
-    spatial.pop()
-    spatial.pop()
-
     if (weights == 'pretrain') & (not retrain):
         spatial.load_weights('weights/incept229_spatial_lstm{}_{}e_cr{}.h5'.format(n_neurons,pre_train[0],cross_index))
         print 'load spatial weights'
+    spatial.pop()
+    spatial.pop()
 
     temporal = InceptionTemporalLSTMConsensus(
                     n_neurons=n_neurons, seq_len=seq_len, classes=classes, 

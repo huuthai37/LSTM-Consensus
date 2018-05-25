@@ -145,12 +145,12 @@ def stack_seq_optical_flow(path_video,render_opt,data_type,pre_random,dataset,tr
 
         height, width, channel = nstack.shape
         if (height == size) & (width == size):
-            nstack_nor = cv2.resize(nstack, (299, 299))
+            nstack = cv2.resize(nstack, (299, 299))
             # print size
-            nstack_nor = nstack_nor.astype('float16',copy=False)
-            # nstack/=255
+            nstack = nstack.astype('float16',copy=False)
+            nstack/=255
             # nstack_nor = nstack - nstack.mean(axis=2, keepdims=True)
-            # nstack_nor = nstack - nstack.mean()
+            nstack_nor = nstack - nstack.mean()
         else:
             print(mode_crop, flip, mode_corner_crop, size, height, x, y)
             sys.exit()

@@ -46,7 +46,7 @@ temp_rate = args.temporal
 seq_len = 3
 n_neurons = args.neural
 dropout = args.dropout
-pre_file = 'incept229_temporal_lstm{}'.format(n_neurons)
+pre_file = 'incept229_temporal{}_lstm{}'.format(temp_rate,n_neurons)
 
 if train & (not retrain):
     weights = 'imagenet'

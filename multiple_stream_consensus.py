@@ -64,7 +64,7 @@ result_model = models.InceptionMultiLSTMConsensus(
                     n_neurons=n_neurons, seq_len=seq_len, classes=classes, 
                     weights=weights, dropout=dropout, fine=fine, retrain=retrain,
                     pre_file=pre_file,old_epochs=old_epochs,cross_index=cross_index,
-                    pre_train=[args.w_spatial, args.w_temporal],,temp_rate=temp_rate)
+                    pre_train=[args.w_spatial, args.w_temporal],temp_rate=temp_rate)
 
 
 if (args.summary == 1):

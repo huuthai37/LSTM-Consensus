@@ -49,7 +49,7 @@ temp_rate = args.temporal
 seq_len = 3
 n_neurons = args.neural
 dropout = args.dropout
-pre_file = 'incept229_twostream_lstm{}'.format(n_neurons)
+pre_file = 'incept229_twostream{}_lstm{}'.format(temp_rate,n_neurons)
 
 if train & (not retrain):
     weights = args.weights
@@ -64,7 +64,7 @@ result_model = models.InceptionMultiLSTMConsensus(
                     n_neurons=n_neurons, seq_len=seq_len, classes=classes, 
                     weights=weights, dropout=dropout, fine=fine, retrain=retrain,
                     pre_file=pre_file,old_epochs=old_epochs,cross_index=cross_index,
-                    pre_train=[args.w_spatial, args.w_temporal])
+                    pre_train=[args.w_spatial, args.w_temporal],,temp_rate=temp_rate)
 
 
 if (args.summary == 1):

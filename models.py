@@ -166,7 +166,7 @@ def InceptionMultiLSTMConsensus2(n_neurons=256, seq_len=3, classes=101, weights=
                     pre_file=pre_file,old_epochs=old_epochs,cross_index=cross_index)
 
     if (weights == 'pretrain') & (not retrain):
-        spatial.load_weights('weights/incept229_spatial_lstm{}_{}e_cr{}.h5'.format(n_neurons,pre_train[0],cross_index))
+        spatial.load_weights('weights/save/incept229_spatial_lstm{}_{}e_cr{}.h5'.format(n_neurons,pre_train[0],cross_index))
         print 'load spatial weights'
     spatial.pop()
     spatial.pop()
@@ -177,7 +177,7 @@ def InceptionMultiLSTMConsensus2(n_neurons=256, seq_len=3, classes=101, weights=
                     pre_file=pre_file,old_epochs=old_epochs,cross_index=cross_index)
 
     if (weights == 'pretrain') & (not retrain):
-        temporal.load_weights('weights/incept229_temporal{}_lstm{}_{}e_cr{}.h5'.format(temp_rate,n_neurons,pre_train[1],cross_index))
+        temporal.load_weights('weights/save/incept229_temporal{}_lstm{}_{}e_cr{}.h5'.format(temp_rate,n_neurons,pre_train[1],cross_index))
         print 'load temporal weights'
 
     temporal.pop()
